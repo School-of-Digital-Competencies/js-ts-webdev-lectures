@@ -8,3 +8,7 @@
 .card {
   border: 1px solid black;
 }
+
+.card--red {
+  color: red;
+}

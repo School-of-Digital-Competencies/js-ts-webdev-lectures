@@ -9,7 +9,10 @@ function Heading(tag = "h1", content) {
 function Card(props) {
   const node = document.createElement("li");
 
-  node.setAttribute("class", "card");
+  node.classList.add("card");
+  if (props._color && props._color === "red") {
+    node.classList.add("card--red");
+  }
 
   const img = document.createElement("img");
   img.setAttribute("src", props.img.src);
@@ -65,6 +68,7 @@ function loadData() {
       img: {
         src: "https://cdn.jsdelivr.net/gh/alohe/avatars/png/vibrent_1.png",
       },
+      _color: "red",
     },
 
     {
