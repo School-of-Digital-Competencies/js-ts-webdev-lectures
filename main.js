@@ -1,54 +1,50 @@
 function Heading(tag = "h1", content) {
-  const node = document.createElement(tag);
+  this.node = document.createElement(tag);
 
-  node.textContent = content;
-
-  return node;
+  this.node.textContent = content;
 }
 
 function Card(props) {
-  const node = document.createElement("li");
+  this.node = document.createElement("li");
 
-  node.classList.add("card");
+  this.node.classList.add("card");
   if (props._color && props._color === "red") {
-    node.classList.add("card--red");
+    this.node.classList.add("card--red");
   }
 
   const img = document.createElement("img");
   img.setAttribute("src", props.img.src);
 
-  const heading = Heading("h6", props.name);
+  const heading = new Heading("h6", props.name);
 
   const paragraph = document.createElement("p");
   paragraph.textContent = props.content;
 
-  node.append(img);
-  node.append(paragraph);
-  node.append(heading);
-
-  return node;
+  this.node.append(img);
+  this.node.append(paragraph);
+  this.node.append(heading.node);
 }
 
 function Grid() {
-  const node = document.createElement("ul");
+  this.node = document.createElement("ul");
 
-  node.setAttribute("class", "grid");
-
-  return node;
+  this.node.setAttribute("class", "grid");
 }
 
 function Page(props) {
   const node = document.createElement("section");
 
-  const h1 = Heading("h1", "Our Happy Clients");
-  const grid = Grid();
-  const cards = props.map((content) => Card(content));
+  const h1 = new Heading("h1", "Our Happy Clients");
+  const grid = new Grid();
+  const cards = props.map((content) => new Card(content));
 
-  node.append(h1);
+  node.append(h1.node);
 
-  node.append(grid);
+  node.append(grid.node);
 
-  node.append(...cards);
+  cards.forEach((element) => {
+    node.append(element.node);
+  });
 
   return node;
 }
