@@ -1,28 +1,57 @@
-function Heading(tag = "h1", content) {
-  this.node = document.createElement(tag);
+class Heading {
+  #node;
 
-  this.node.textContent = content;
-}
+  constructor(tag = "h1", content) {
+    this.#node = document.createElement(tag);
 
-function Card(props) {
-  this.node = document.createElement("li");
-
-  this.node.classList.add("card");
-  if (props._color && props._color === "red") {
-    this.node.classList.add("card--red");
+    this.#node.textContent = content;
   }
 
-  const img = document.createElement("img");
-  img.setAttribute("src", props.img.src);
+  get node() {
+    return this.#node;
+  }
+}
 
-  const heading = new Heading("h6", props.name);
+class Card {
+  #node;
 
-  const paragraph = document.createElement("p");
-  paragraph.textContent = props.content;
+  constructor(props) {
+    this.#node = document.createElement("li");
+    this.#renderContent(props);
+  }
 
-  this.node.append(img);
-  this.node.append(paragraph);
-  this.node.append(heading.node);
+  #renderContent(props) {
+    this.#node.classList.add("card");
+    if (props._color && props._color === "red") {
+      console.log("aaa", this.#node, this.#node.classList);
+      this.#node.classList.add("card--red");
+    }
+
+    this.#renderImage(props);
+    this.#renderParagraph(props);
+    this.#renderHeading(props);
+  }
+
+  #renderImage(props) {
+    const img = document.createElement("img");
+    img.setAttribute("src", props.img.src);
+    this.#node.append(img);
+  }
+
+  #renderHeading(props) {
+    const heading = new Heading("h6", props.name);
+    this.#node.append(heading.node);
+  }
+
+  #renderParagraph(props) {
+    const paragraph = document.createElement("p");
+    paragraph.textContent = props.content;
+    this.#node.append(paragraph);
+  }
+
+  get node() {
+    return this.#node;
+  }
 }
 
 function Grid() {
@@ -42,8 +71,8 @@ function Page(props) {
 
   node.append(grid.node);
 
-  cards.forEach((element) => {
-    node.append(element.node);
+  cards.forEach((card) => {
+    node.append(card.node);
   });
 
   return node;
