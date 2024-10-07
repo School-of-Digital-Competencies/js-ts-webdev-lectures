@@ -34,17 +34,30 @@ function Grid() {
   return node;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  // start to build our page
+function Page(props) {
+  const node = document.createElement("section");
+
   const h1 = Heading("h1", "Our Happy Clients");
-
-  document.body.append(h1);
-
   const grid = Grid();
+  const cards = props.map((content) => Card(content));
 
-  document.body.append(grid);
+  node.append(h1);
 
-  const data = [
+  node.append(grid);
+
+  node.append(...cards);
+
+  return node;
+}
+
+function renderPage(data) {
+  const page = Page(data);
+
+  document.body.append(page);
+}
+
+function loadData() {
+  return [
     {
       content:
         "Get a fully retina ready site when you build with Startup Framework. Websites look sharper and more gorgeous on devices with retina display support",
@@ -63,8 +76,15 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     },
   ];
+}
 
-  const cards = data.map((content) => Card(content));
+function initApp() {
+  const data = loadData();
 
-  document.body.append(...cards);
+  renderPage(data);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  // start to build our page
+  initApp();
 });
