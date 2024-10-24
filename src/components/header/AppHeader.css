@@ -1,0 +1,17 @@
+.app-header-container {
+  margin: 4rem 0;
+}
+
+.app-header,
+.app-links {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  justify-content: space-between;
+}
+
+.app-links > li:not(:last-child) {
+  margin-right: 1rem;
+}
