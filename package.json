@@ -1,0 +1,17 @@
+{
+  "name": "frontend-lecture-sandbox",
+  "version": "1.0.0",
+  "description": "Source code is available on different branches",
+  "main": "index.js",
+  "scripts": {
+    "serve": "vite"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bulma": "^1.0.1",
+    "navigo": "^8.11.1",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11"
+  }
+}
