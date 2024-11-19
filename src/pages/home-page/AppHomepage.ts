@@ -1,11 +1,11 @@
 import { AppHome } from "../../templates";
-import { loadData } from "../../backend/api";
+import { loadProducts } from "../../backend/api";
 
 export async function AppHomepage() {
   const element = document.createElement("main");
 
   try {
-    const products = await loadData();
+    const products = await loadProducts();
 
     const appHome = AppHome({ products });
 

@@ -1,8 +1,7 @@
 import { AppCard } from "../../molecules";
+import { TProduct } from "../../types";
 
-export function AppProductsGrid(
-  products: { title: string; price: number }[]
-): HTMLElement {
+export function AppProductsGrid(products: TProduct[]): HTMLElement {
   const element = document.createElement("div");
 
   // https://bulma.io/documentation/grid/smart-grid/

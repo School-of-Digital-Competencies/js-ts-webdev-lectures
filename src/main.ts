@@ -1,8 +1,6 @@
 import "bulma/css/versions/bulma-prefixed.min.css";
-import { AppHomepage } from "./pages";
+import router from "./router";
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const element = await AppHomepage();
-
-  document.body.prepend(...[element]);
+document.addEventListener("DOMContentLoaded", () => {
+  router.resolve();
 });
