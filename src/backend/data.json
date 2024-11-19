@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "title": "Read headphone",
+    "price": 245
+  },
+  {
+    "id": 2,
+    "title": "Blye headphone",
+    "price": 17
+  },
+  {
+    "id": 3,
+    "title": "Yellow headphone",
+    "price": 763
+  }
+]
