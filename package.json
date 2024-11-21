@@ -1,0 +1,24 @@
+{
+  "name": "js-ts-webdev-lectures",
+  "version": "1.0.0",
+  "description": "- Clone repo\r - Checkout to the branch with the name of corresponding lecture\r - Follow the instructions in README.md file",
+  "main": "index.js",
+  "dependencies": {
+    "bulma": "^1.0.2",
+    "esbuild": "^0.21.5",
+    "nanoid": "^3.3.7",
+    "navigo": "^8.11.1",
+    "picocolors": "^1.1.0",
+    "postcss": "^8.4.47",
+    "rollup": "^4.24.0",
+    "source-map-js": "^1.2.1",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "vite"
+  },
+  "author": "",
+  "license": "ISC"
+}
