@@ -34,7 +34,25 @@ function loadProductById(id: number | string): Promise<TProduct> {
   });
 }
 
+async function loadPosts() {
+  const repsonse = await fetch("https://jsonplaceholder.typicode.com/posts");
+  const data = await repsonse.json();
+
+  return data;
+
+  // return fetch("https://jsonplaceholder.typicode.com/posts")
+  //   .then((response) => {
+  //     console.log(response);
+  //     return response.json();
+  //   })
+  //   .then((data: TProduct[]) => {
+  //     console.log(data);
+  //     return data;
+  //   });
+}
+
 export default {
   loadProducts,
   loadProductById,
+  loadPosts,
 };
