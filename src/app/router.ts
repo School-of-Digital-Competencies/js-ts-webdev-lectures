@@ -1,5 +1,5 @@
 import Navigo from "navigo";
-import { AppHomepage, AppProductPage } from "../pages";
+import { AppHomepage, AppPaymentPage, AppProductPage } from "../pages";
 
 const router = new Navigo("/");
 
@@ -29,6 +29,8 @@ router
 
     "/products/:productId": (params: { data: { productId: string } }) =>
       handleRouteChange(AppProductPage, params),
+
+    "/payments": () => handleRouteChange(AppPaymentPage),
   })
   .resolve();
 

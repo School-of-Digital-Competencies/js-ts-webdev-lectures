@@ -9,8 +9,6 @@ function AppForm(id: string) {
   element.setAttribute("id", id);
   element.setAttribute("class", "bulma-form");
   element.setAttribute("action", "");
-  
-
 
   return element;
 }
