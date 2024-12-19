@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+      .breadcrumbs {
+        display: flex;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .image-gallery {
+        display: flex;
+      }
+
+      .card {
+        display: flex;
+        flex-direction: column;
+
+        @media screen and (min-width: 666px) {
+          flex-direction: row;
+        }
+      }
+
+      /* @media screen and (min-width: 666px) {
+        .card {
+          flex-direction: row;
+        }
+      }
+
+      @media screen and (min-width: 888px) and (max-width: 1024px) {
+        .card {
+          display: grid;
+        }
+      } */
+    </style>
+  </head>
+  <body>
+    <header>Shop co</header>
+
+    <ul class="breadcrumbs">
+      <li>Home</li>
+      <li>></li>
+      <li>Scincare</li>
+      <li>></li>
+      <li>Tree oil</li>
+    </ul>
+
+    <section class="card">
+      <div class="card-images">
+        <img src="./src/assets/image1.jpg" alt="" />
+        <article class="image-gallery">
+          <img src="./src/assets/image6.jpg" alt="" />
+          <img src="./src/assets/image6.jpg" alt="" />
+          <img src="./src/assets/image6.jpg" alt="" />
+        </article>
+      </div>
+
+      <div class="card-content">
+        <h1>Tree oil</h1>
+
+        <p>
+          Tea tree oil contains a number of compounds, including terpinen-4-ol,
+          that have been shown to kill certain bacteria,
+        </p>
+      </div>
+    </section>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
