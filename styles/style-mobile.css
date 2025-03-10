@@ -1,0 +1,218 @@
+/* All styles are described using a mobile-first approach */
+
+main {
+  /* Set padding on a root content element as required by Figma Design */
+  padding: 60px 30px;
+}
+
+/* HERO SECTION STYLES */
+.hero {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 50px 0;
+}
+
+/* You could use just one selector .hero-image */
+/* The purpose of using two selectors is:
+  - to help CSS detect a particular hero-image element inside particular hero element. If our code is large, then you may use the same hero or hero-image class again. And there will be a style conflict. Better selector clearance - better code will be.
+  - to increase code readability. When a developer read code fast, he will get a better chance to understand to what component these styles belong to  
+  */
+.hero .hero-image {
+  width: auto;
+  height: 100%;
+}
+
+.hero .about {
+  text-align: center;
+}
+
+.hero .subheading {
+  font-size: 16px;
+  line-height: 22px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+/* ARTICLE ABOUT STYLES */
+/* Why not to use .hero .about .heading? Based on the comments above it's recommened to do so. */
+/* You can use .hero .about .heading.  */
+/* However our .about section is an article tag. This tag represents a complete, or self-contained, composition in a document. Meaning if we move that ourside .hero, nothing should change. That's why we are defining styles for .about, not for .hero .about. If in future we need to adjust styles only for article within .hero section or another one, we will specify a class/tag/wharever before .about class. */
+.about .heading {
+  font-weight: bold;
+  font-size: 30px;
+  line-height: 40px;
+  margin: 0 0 30px 0;
+}
+
+/* You could create you own class for paragraphs and use it like .about .about-content */
+.about p {
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 24px;
+  margin: 0 80px 20px 80px;
+}
+
+@media screen and (min-width: 768px) {
+  .about p {
+    font-size: 22px;
+    line-height: 30px;
+    margin: 0 0 44px;
+  }
+}
+
+.about .button-group button:first-child {
+  margin-bottom: 20px;
+}
+
+.about .button-group button {
+  display: block;
+  margin: auto;
+}
+
+.button-cta {
+  background: #a387c4;
+  border-radius: 30px;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 20px;
+  padding: 20px 60px;
+  border: 1px solid #a387c4;
+}
+
+.button-secondary {
+  background: transparent;
+  border-radius: 30px;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 20px;
+  padding: 20px 60px;
+  border: 1px solid #a387c4;
+}
+
+.about ul.achievements {
+  display: flex;
+  /* Because our achievements in HTML is based on <ul> element, we are overriding default <ul> rules like list-style-type (bullets on the left side) and margin/padding */
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.about ul.achievements li h2 {
+  font-weight: bold;
+  font-size: 30px;
+  line-height: 40px;
+  margin: 0 0 16px 0;
+}
+
+.about ul.achievements li p {
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 24px;
+  margin: 0;
+}
+
+/* This syntax li:not or li:last-child is called https://www.w3schools.com/css/css_pseudo_classes.asp */
+/* In our case we are them to apply styles for all <li> but not for the last <li> element under ul.achievements element  */
+/* :not(selector) - Selects every element that is not a "selector" element - https://www.w3schools.com/cssref/sel_not.php */
+/* :last-child	li:last-child	- Selects every <li> elements that is the last child of its parent */
+/* Full list of pseudo classes https://www.w3schools.com/css/css_pseudo_classes.asp */
+.about ul.achievements li:not(:last-child) {
+  margin-right: 10px;
+}
+
+.offer {
+  border: 5px solid #a387c4;
+  box-shadow: 0px 0px 10px 3px #a387c4;
+  border-radius: 30px;
+  padding: 60px 10px;
+  margin: 0 0 70px 0;
+  /* NOTE: Text elements could be centerized horizontally by simple using text-align: center, no need to use flexbox for that simple task */
+  text-align: center;
+  /* Because our button and two memoji are positioned like outside of an .offer element, we are setting position: relative; to anchor these element with position: absolute; (see .offer button below) */
+  /* More about position https://www.w3schools.com/css/css_positioning.asp */
+  position: relative;
+}
+
+.offer--yellow {
+  background-color: yellow;
+}
+
+.offer--magenta {
+  background-color: magenta;
+}
+
+.offer h3 {
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.offer h2 {
+  font-weight: bold;
+  font-size: 25px;
+  line-height: 32px;
+  /* NOTE: Simple trick how to align an element horizontally. auto meaning we are reallying on browser to apply calculated margin to be added right and left */
+  margin: 0 auto;
+}
+
+.offer button {
+  background: #a387c4;
+  border-radius: 30px;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 20px;
+  padding: 20px 60px;
+  border: 1px solid #a387c4;
+  /* Positioning "magic". See position explanation above */
+  /* More about position: https://learn.javascript.ru/position */
+  position: absolute;
+  /* Push our element to the center */
+  left: 50%;
+  /* Applying tranformation for an element to centerized it horizontally correctly based on it's content inside. Without this property only left border of our element would be placed on the center */
+  transform: translate(-50%, 50%);
+}
+
+.offer img {
+  /* Hide memoji on mobile according to design */
+  display: none;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 88px;
+}
+
+.header__logo {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.header__menu div {
+  width: 35px;
+  height: 5px;
+  background-color: menu;
+  margin: 6px 0;
+}
+
+.header__nav {
+  display: none;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.header__nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+.header__nav ul li:not(:first-child) {
+  margin-left: 26px;
+}

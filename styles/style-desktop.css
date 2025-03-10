@@ -1,0 +1,128 @@
+/* More details https://www.w3schools.com/css/css_rwd_mediaqueries.asp */
+@media screen and (min-width: 768px) {
+  /* All these styles would be applies only for screens with minimum display width in 768px. Regulary these're small tablet and desktop screens  */
+
+  main {
+    /* Set padding on a root content element as required by Figma Design */
+    padding: 140px 90px;
+  }
+
+  /* HERO SECTION STYLES */
+  .hero {
+    /* display: flex; rule has been already defined in style-mobile.css which is our common styles for mobile and other screens */
+    /* Here we are just overring flex-direction: column; because on tablet and desktop screen it should be like aligned in a row */
+    flex-direction: row;
+    align-items: center;
+    margin: 0 0 70px 0;
+  }
+
+  /* ARTICLE ABOUT STYLES */
+  /* Why not to use .hero .about .heading? Based on the comments above it's recommened to do so. */
+  /* You can use .hero .about .heading.  */
+  /* However our .about section is an article tag. This tag represents a complete, or self-contained, composition in a document. Meaning if we move that ourside .hero, nothing should change. That's why we are defining styles for .about, not for .hero .about. If in future we need to adjust styles only for article within .hero section or another one, we will specify a class/tag/wharever before .about class. */
+  .hero .about {
+    text-align: left;
+  }
+
+  .hero .about .heading {
+    font-size: 50px;
+    line-height: 66px;
+    text-shadow: 0px 0px 10px #a387c4;
+    margin: 0 0 20px 0;
+  }
+
+  .hero .about .subheading {
+    font-size: 20px;
+    line-height: 26px;
+  }
+
+  .hero .about p {
+    font-size: 22px;
+    line-height: 30px;
+    margin: 0 0 44px;
+  }
+
+  .hero .about ul.achievements {
+    display: flex;
+    /* Because our achievements in HTML is based on <ul> element, we are overriding default <ul> rules like list-style-type (bullets on the left side) and margin/padding */
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .hero .about ul.achievements li h2 {
+    font-size: 50px;
+    line-height: 66px;
+  }
+
+  /* This syntax li:not or li:last-child is called https://www.w3schools.com/css/css_pseudo_classes.asp */
+  /* In our case we are them to apply styles for all <li> but not for the last <li> element under ul.achievements element  */
+  /* :not(selector) - Selects every element that is not a "selector" element - https://www.w3schools.com/cssref/sel_not.php */
+  /* :last-child	li:last-child	- Selects every <li> elements that is the last child of its parent */
+  /* Full list of pseudo classes https://www.w3schools.com/css/css_pseudo_classes.asp */
+  .hero .about ul.achievements li:not(:last-child) {
+    margin-right: 70px;
+  }
+
+  .about .button-group button {
+    display: inline-block;
+  }
+
+  .offer {
+    padding: 70px 130px;
+    margin: 0 0 150px 0;
+  }
+
+  .offer h3 {
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  .offer h2 {
+    font-weight: bold;
+    font-size: 50px;
+    line-height: 66px;
+    /* Setting max-width mostly for large screens to avoid placing text content in one line for long text */
+    max-width: 900px;
+  }
+
+  .offer button {
+    padding: 26px 140px;
+    /* Positioning "magic". See position explanation above */
+    /* More about position: https://learn.javascript.ru/position */
+    position: absolute;
+    /* Push our element to the center */
+    left: 50%;
+    /* Applying tranformation for an element to centerized it horizontally correctly based on it's content inside. Without this property only left border of our element would be placed on the center */
+    transform: translate(-50%, 50%);
+  }
+
+  .offer img {
+    height: 268px;
+    /* Show elements */
+    display: block;
+  }
+
+  .offer img:first-of-type {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    transform: translate(10%, 40%);
+  }
+
+  .offer img:last-of-type {
+    display: block;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: translate(10%, 40%);
+  }
+
+  .header__menu {
+    display: none;
+  }
+
+  .header__nav {
+    display: block;
+  }
+}
