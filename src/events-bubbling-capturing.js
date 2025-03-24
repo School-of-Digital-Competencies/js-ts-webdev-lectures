@@ -8,8 +8,10 @@ const clearLogButton = document.getElementById("clearLog");
 // Capturing phase (true)
 grandparent.addEventListener(
   "click",
-  (e) => {
-    logEvent(`Grandparent (Capturing) - Target: ${e.target.id}`);
+  (event) => {
+    logEvent(`Grandparent (Capturing) - Target: ${event.target.id}`);
+
+    // event.stopPropagation(); // stop event
   },
   true
 );
@@ -18,6 +20,8 @@ parent.addEventListener(
   "click",
   (e) => {
     logEvent(`Parent (Capturing) - Target: ${e.target.id}`);
+
+    console.log(e.target, e.currentTarget);
   },
   true
 );

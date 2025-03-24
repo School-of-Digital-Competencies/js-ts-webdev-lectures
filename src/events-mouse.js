@@ -1,5 +1,6 @@
 // Mouse Events
 const mouseBox = document.getElementById("mouseBox");
+
 mouseBox.addEventListener("mouseenter", () => {
   mouseBox.classList.add("has-background-primary-light");
   document.getElementById("mouseOutput").textContent = "Mouse entered";
