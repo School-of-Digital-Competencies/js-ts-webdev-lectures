@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Примеры работы с формами</title>
+    <link
+      rel="stylesheet"
+      href="https://fastly.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"
+    />
+    <style>
+      .tab-content {
+        display: none;
+      }
+      .tab-content.is-active {
+        display: block;
+      }
+      .tabs {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="title">Примеры работы с формами</h1>
+
+      <div class="tabs">
+        <ul>
+          <li class="is-active" data-tab="basic-form">
+            <a>Базовая форма</a>
+          </li>
+          <li data-tab="validation-form">
+            <a>Валидация формы</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Базовая форма -->
+      <div id="basic-form" class="tab-content is-active">
+        <div class="box">
+          <h2 class="subtitle">Базовая форма</h2>
+          <form id="basicForm">
+            <div class="field">
+              <label class="label">Имя</label>
+              <div class="control">
+                <input class="input" type="text" name="name" required />
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Email</label>
+              <div class="control">
+                <input class="input" type="email" name="email" required />
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Возраст</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select name="age" required>
+                    <option value="">Выберите возраст</option>
+                    <option value="18-25">18-25 лет</option>
+                    <option value="26-35">26-35 лет</option>
+                    <option value="36-45">36-45 лет</option>
+                    <option value="46+">46+ лет</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Интересы</label>
+              <div class="control">
+                <label class="checkbox">
+                  <input type="checkbox" name="interests" value="programming" />
+                  Программирование
+                </label>
+              </div>
+              <div class="control">
+                <label class="checkbox">
+                  <input type="checkbox" name="interests" value="design" />
+                  Дизайн
+                </label>
+              </div>
+              <div class="control">
+                <label class="checkbox">
+                  <input type="checkbox" name="interests" value="marketing" />
+                  Маркетинг
+                </label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button class="button is-primary" type="submit">
+                  Отправить
+                </button>
+              </div>
+            </div>
+          </form>
+          <div id="basicFormResult" class="mt-4"></div>
+        </div>
+      </div>
+
+      <!-- Форма с валидацией -->
+      <div id="validation-form" class="tab-content">
+        <div class="box">
+          <h2 class="subtitle">Валидация формы</h2>
+          <form id="validationForm">
+            <div class="field">
+              <label class="label">Пароль</label>
+              <div class="control">
+                <input
+                  class="input"
+                  type="password"
+                  name="password"
+                  id="password"
+                  required
+                />
+              </div>
+              <p class="help">Минимум 8 символов, включая цифры и буквы</p>
+            </div>
+            <div class="field">
+              <label class="label">Подтверждение пароля</label>
+              <div class="control">
+                <input
+                  class="input"
+                  type="password"
+                  name="confirmPassword"
+                  id="confirmPassword"
+                  required
+                />
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button class="button is-primary" type="submit">
+                  Проверить
+                </button>
+              </div>
+            </div>
+          </form>
+          <div id="validationResult" class="mt-4"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./src/tabs.js"></script>
+    <script src="./src/basic-form.js"></script>
+    <script src="./src/validation-form.js"></script>
+  </body>
+</html>
