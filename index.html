@@ -6,7 +6,7 @@
     <title>DOM Events Examples with Bulma</title>
     <link
       rel="stylesheet"
-      href="https://fastly.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+      href="https://fastly.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"
     />
     <style>
       /* Custom styles for specific interactions */
@@ -22,6 +22,26 @@
 
       #mouseBox {
         transition: all 0.3s ease;
+      }
+
+      /* Add custom styles for the event phase demo */
+      #grandparent,
+      #parent,
+      #child {
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+
+      #grandparent:hover,
+      #parent:hover,
+      #child:hover {
+        transform: scale(1.02);
+      }
+
+      #phaseLog {
+        background-color: #f5f5f5;
+        font-family: monospace;
+        font-size: 0.9em;
       }
     </style>
   </head>
@@ -124,6 +144,35 @@
         <p class="subtitle" id="dragOutput"></p>
       </div>
 
+      <!-- Event Bubbling and Capturing -->
+      <div class="box mb-5">
+        <h2 class="title is-4">Event Bubbling & Capturing</h2>
+
+        <div class="block">
+          <div class="notification is-success" id="grandparent">
+            Grandparent
+            <div class="notification is-warning mt-3 ml-5" id="parent">
+              Parent
+              <div class="notification is-danger mt-3 ml-5" id="child">
+                Child (Click Me)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="block">
+          <button class="button is-small is-info" id="clearLog">
+            Clear Log
+          </button>
+        </div>
+
+        <pre
+          class="box"
+          id="phaseLog"
+          style="height: 200px; overflow-y: auto"
+        ></pre>
+      </div>
+
       <!-- Event Delegation -->
       <div class="box mb-5">
         <h2 class="title is-4">Event Delegation</h2>
@@ -148,6 +197,7 @@
       <script src="./src/events-keyboard.js"></script>
       <script src="./src/events-form.js"></script>
       <script src="./src/events-drag-n-drop.js"></script>
+      <script src="./src/events-bubbling-capturing.js"></script>
       <script src="./src/events-delegation.js"></script>
     </div>
   </body>
