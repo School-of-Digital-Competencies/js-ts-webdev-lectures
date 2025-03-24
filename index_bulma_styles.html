@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DOM Events Examples with Bulma</title>
+    <link
+      rel="stylesheet"
+      href="https://fastly.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    />
+    <style>
+      /* Custom styles for specific interactions */
+      .draggable {
+        cursor: move;
+        user-select: none;
+      }
+
+      .drop-zone.dragover {
+        background-color: #f5f5f5;
+        border-color: #3273dc;
+      }
+
+      #mouseBox {
+        transition: all 0.3s ease;
+      }
+    </style>
+  </head>
+  <body class="section">
+    <div class="container">
+      <h1 class="title is-1 has-text-centered mb-6">DOM Events Examples</h1>
+
+      <!-- Click Events -->
+      <div class="box mb-5">
+        <h2 class="title is-4">Click Events</h2>
+        <div class="buttons">
+          <button class="button is-primary" id="clickMe">Click Me</button>
+          <button class="button is-info" id="doubleClickMe">
+            Double Click Me
+          </button>
+        </div>
+        <p class="subtitle" id="clickOutput">Click status will appear here</p>
+      </div>
+
+      <!-- Mouse Events -->
+      <div class="box mb-5">
+        <h2 class="title is-4">Mouse Events</h2>
+        <div class="box has-text-centered" id="mouseBox">Hover over me!</div>
+        <p class="subtitle" id="mouseOutput">Mouse events will appear here</p>
+      </div>
+
+      <!-- Keyboard Events -->
+      <div class="box mb-5">
+        <h2 class="title is-4">Keyboard Events</h2>
+        <div class="field">
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              id="keyInput"
+              placeholder="Type here..."
+            />
+          </div>
+        </div>
+        <p class="subtitle" id="keyOutput">Key events will appear here</p>
+      </div>
+
+      <!-- Form Events -->
+      <div class="box mb-5">
+        <h2 class="title is-4">Form Events</h2>
+        <form id="demoForm">
+          <div class="field">
+            <label class="label">Username</label>
+            <div class="control">
+              <input
+                class="input"
+                type="text"
+                id="username"
+                placeholder="Enter username"
+              />
+            </div>
+            <p class="help is-danger" id="usernameError"></p>
+          </div>
+
+          <div class="field">
+            <label class="label">Password</label>
+            <div class="control">
+              <input
+                class="input"
+                type="password"
+                id="password"
+                placeholder="Enter password"
+              />
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <button class="button is-success" type="submit">Submit</button>
+            </div>
+          </div>
+        </form>
+        <p class="subtitle" id="formOutput"></p>
+      </div>
+
+      <!-- Drag and Drop -->
+      <div class="box mb-5">
+        <h2 class="title is-4">Drag and Drop</h2>
+        <div class="columns is-align-items-center">
+          <div class="column is-narrow">
+            <div
+              class="notification is-primary draggable"
+              draggable="true"
+              id="dragItem"
+            >
+              Drag Me
+            </div>
+          </div>
+          <div class="column">
+            <div class="box has-text-centered drop-zone" id="dropZone">
+              Drop Zone
+            </div>
+          </div>
+        </div>
+        <p class="subtitle" id="dragOutput"></p>
+      </div>
+
+      <!-- Event Delegation -->
+      <div class="box mb-5">
+        <h2 class="title is-4">Event Delegation</h2>
+        <div class="block">
+          <ul class="list" id="itemList">
+            <li class="list-item">
+              Item 1 <button class="delete is-small ml-2"></button>
+            </li>
+            <li class="list-item">
+              Item 2 <button class="delete is-small ml-2"></button>
+            </li>
+            <li class="list-item">
+              Item 3 <button class="delete is-small ml-2"></button>
+            </li>
+          </ul>
+        </div>
+        <button class="button is-warning" id="addItem">Add New Item</button>
+      </div>
+
+      <script src="./src/events-click.js"></script>
+      <script src="./src/events-mouse.js"></script>
+      <script src="./src/events-keyboard.js"></script>
+      <script src="./src/events-form.js"></script>
+      <script src="./src/events-drag-n-drop.js"></script>
+      <script src="./src/events-delegation.js"></script>
+    </div>
+  </body>
+</html>

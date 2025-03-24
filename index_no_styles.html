@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DOM Events Examples</title>
+    <style>
+      .example-section {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+      }
+      .hover-box {
+        width: 200px;
+        height: 100px;
+        background-color: #f0f0f0;
+        margin: 10px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .draggable {
+        width: 100px;
+        height: 100px;
+        background-color: lightblue;
+        margin: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: move;
+      }
+      .drop-zone {
+        width: 300px;
+        height: 150px;
+        border: 2px dashed #666;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>DOM Events Examples</h1>
+
+    <!-- Click Events -->
+    <div class="example-section">
+      <h2>Click Events</h2>
+      <button id="clickMe">Click Me</button>
+      <button id="doubleClickMe">Double Click Me</button>
+      <p id="clickOutput">Click status will appear here</p>
+    </div>
+
+    <!-- Mouse Events -->
+    <div class="example-section">
+      <h2>Mouse Events</h2>
+      <div class="hover-box" id="mouseBox">Hover over me!</div>
+      <p id="mouseOutput">Mouse events will appear here</p>
+    </div>
+
+    <!-- Keyboard Events -->
+    <div class="example-section">
+      <h2>Keyboard Events</h2>
+      <input type="text" id="keyInput" placeholder="Type here..." />
+      <p id="keyOutput">Key events will appear here</p>
+    </div>
+
+    <!-- Form Events -->
+    <div class="example-section">
+      <h2>Form Events</h2>
+      <form id="demoForm">
+        <input type="text" id="username" placeholder="Enter username" />
+        <span id="usernameError" style="color: red"></span>
+        <br />
+        <input type="password" id="password" placeholder="Enter password" />
+        <br />
+        <button type="submit">Submit</button>
+      </form>
+      <p id="formOutput"></p>
+    </div>
+
+    <!-- Drag and Drop -->
+    <div class="example-section">
+      <h2>Drag and Drop</h2>
+      <div class="draggable" draggable="true" id="dragItem">Drag Me</div>
+      <div class="drop-zone" id="dropZone">Drop Zone</div>
+      <p id="dragOutput"></p>
+    </div>
+
+    <!-- Event Delegation -->
+    <div class="example-section">
+      <h2>Event Delegation</h2>
+      <ul id="itemList">
+        <li>Item 1 <button class="remove">×</button></li>
+        <li>Item 2 <button class="remove">×</button></li>
+        <li>Item 3 <button class="remove">×</button></li>
+      </ul>
+      <button id="addItem">Add New Item</button>
+    </div>
+
+    <script>
+      // Click Events
+      document.getElementById("clickMe").addEventListener("click", () => {
+        document.getElementById("clickOutput").textContent = "Single clicked!";
+      });
+
+      document
+        .getElementById("doubleClickMe")
+        .addEventListener("dblclick", () => {
+          document.getElementById("clickOutput").textContent =
+            "Double clicked!";
+        });
+
+      // Mouse Events
+      const mouseBox = document.getElementById("mouseBox");
+      mouseBox.addEventListener("mouseenter", () => {
+        mouseBox.style.backgroundColor = "#e0e0e0";
+        document.getElementById("mouseOutput").textContent = "Mouse entered";
+      });
+
+      mouseBox.addEventListener("mouseleave", () => {
+        mouseBox.style.backgroundColor = "#f0f0f0";
+        document.getElementById("mouseOutput").textContent = "Mouse left";
+      });
+
+      mouseBox.addEventListener("mousedown", () => {
+        mouseBox.textContent = "Mouse down";
+      });
+
+      mouseBox.addEventListener("mouseup", () => {
+        mouseBox.textContent = "Mouse up";
+      });
+
+      // Keyboard Events
+      document.getElementById("keyInput").addEventListener("keydown", (e) => {
+        document.getElementById(
+          "keyOutput"
+        ).textContent = `Key pressed: ${e.key} (Code: ${e.code})`;
+      });
+
+      // Form Events
+      document.getElementById("username").addEventListener("blur", () => {
+        const username = document.getElementById("username").value;
+        if (username.length < 3) {
+          document.getElementById("usernameError").textContent =
+            "Username must be at least 3 characters";
+        } else {
+          document.getElementById("usernameError").textContent = "";
+        }
+      });
+
+      document.getElementById("demoForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        document.getElementById("formOutput").textContent = "Form submitted!";
+      });
+
+      // Drag and Drop
+      const dragItem = document.getElementById("dragItem");
+      const dropZone = document.getElementById("dropZone");
+
+      dragItem.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/plain", "Dragged Item");
+        dragItem.style.opacity = "0.5";
+      });
+
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.style.backgroundColor = "#e8f4fc";
+      });
+
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        const data = e.dataTransfer.getData("text/plain");
+        dropZone.textContent = `Dropped: ${data}`;
+        dropZone.style.backgroundColor = "";
+        dragItem.style.opacity = "1";
+      });
+
+      // Event Delegation
+      document.getElementById("itemList").addEventListener("click", (e) => {
+        if (e.target.classList.contains("remove")) {
+          e.target.parentElement.remove();
+        }
+      });
+
+      let itemCount = 3;
+      document.getElementById("addItem").addEventListener("click", () => {
+        itemCount++;
+        const newItem = document.createElement("li");
+        newItem.innerHTML = `Item ${itemCount} <button class="remove">×</button>`;
+        document.getElementById("itemList").appendChild(newItem);
+      });
+    </script>
+  </body>
+</html>
