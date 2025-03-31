@@ -4,17 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Примеры работы с формами</title>
+    <!-- Bulma CSS framework for styling -->
     <link
       rel="stylesheet"
       href="https://fastly.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"
     />
     <style>
+      /* Hide all tab content by default */
       .tab-content {
         display: none;
       }
+      /* Show only active tab content */
       .tab-content.is-active {
         display: block;
       }
+      /* Add spacing below tabs */
       .tabs {
         margin-bottom: 20px;
       }
@@ -24,6 +28,7 @@
     <div class="container mt-5">
       <h1 class="title">Примеры работы с формами</h1>
 
+      <!-- Tab navigation -->
       <div class="tabs">
         <ul>
           <li class="is-active" data-tab="basic-form">
@@ -38,23 +43,26 @@
         </ul>
       </div>
 
-      <!-- Базовая форма -->
+      <!-- Basic Form Tab -->
       <div id="basic-form" class="tab-content is-active">
         <div class="box">
           <h2 class="subtitle">Базовая форма</h2>
           <form id="basicForm">
+            <!-- Name input field -->
             <div class="field">
               <label class="label">Имя</label>
               <div class="control">
                 <input class="input" type="text" name="name" required />
               </div>
             </div>
+            <!-- Email input field -->
             <div class="field">
               <label class="label">Email</label>
               <div class="control">
                 <input class="input" type="email" name="email" required />
               </div>
             </div>
+            <!-- Age dropdown selection -->
             <div class="field">
               <label class="label">Возраст</label>
               <div class="control">
@@ -69,6 +77,29 @@
                 </div>
               </div>
             </div>
+            <!-- Favorite color radio buttons -->
+            <div class="field">
+              <label class="label">Любимый цвет</label>
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="favoriteColor" value="red" required>
+                  Красный
+                </label>
+              </div>
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="favoriteColor" value="green">
+                  Зеленый
+                </label>
+              </div>
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="favoriteColor" value="blue">
+                  Синий
+                </label>
+              </div>
+            </div>
+            <!-- Interests checkboxes -->
             <div class="field">
               <label class="label">Интересы</label>
               <div class="control">
@@ -90,6 +121,7 @@
                 </label>
               </div>
             </div>
+            <!-- Submit button -->
             <div class="field">
               <div class="control">
                 <button class="button is-primary" type="submit">
@@ -98,15 +130,17 @@
               </div>
             </div>
           </form>
+          <!-- Result display area -->
           <div id="basicFormResult" class="mt-4"></div>
         </div>
       </div>
 
-      <!-- Форма с валидацией -->
+      <!-- Form Validation Tab -->
       <div id="validation-form" class="tab-content">
         <div class="box">
           <h2 class="subtitle">Валидация формы</h2>
           <form id="validationForm">
+            <!-- Password input with validation -->
             <div class="field">
               <label class="label">Пароль</label>
               <div class="control">
@@ -120,6 +154,7 @@
               </div>
               <p class="help">Минимум 8 символов, включая цифры и буквы</p>
             </div>
+            <!-- Password confirmation -->
             <div class="field">
               <label class="label">Подтверждение пароля</label>
               <div class="control">
@@ -132,6 +167,7 @@
                 />
               </div>
             </div>
+            <!-- Validation button -->
             <div class="field">
               <div class="control">
                 <button class="button is-primary" type="submit">
@@ -140,14 +176,17 @@
               </div>
             </div>
           </form>
+          <!-- Validation result display area -->
           <div id="validationResult" class="mt-4"></div>
         </div>
       </div>
 
+      <!-- Dynamic Form Tab -->
       <div id="dynamic-form" class="tab-content">
         <div class="box">
           <h2 class="subtitle">Динамическая форма</h2>
 
+          <!-- Controls for adding dynamic inputs -->
           <div class="box">
             <div class="field">
               <label class="label">Add Dynamic Inputs</label>
@@ -165,8 +204,16 @@
             </div>
           </div>
 
-          <form id="dynamicForm"></form>
+          <!-- Dynamic form container -->
+          <form id="dynamicForm">
+            <div class="field">
+              <div class="control">
+                <button type="submit" class="button is-primary">Отправить форму</button>
+              </div>
+            </div>
+          </form>
 
+          <!-- Dynamic form values output -->
           <div id="dynamicOutput" class="box is-hidden">
             <h2 class="subtitle">Dynamic Input Values:</h2>
             <pre id="dynamicValuesOutput"></pre>
@@ -175,6 +222,7 @@
       </div>
     </div>
 
+    <!-- JavaScript files -->
     <script src="./src/tabs.js"></script>
     <script src="./src/basic-form.js"></script>
     <script src="./src/validation-form.js"></script>

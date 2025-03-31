@@ -1,6 +1,8 @@
+// Add event listener to the form for handling form submission
 document.getElementById("validationForm").addEventListener("submit", (e) => {
   e.preventDefault();
 
+  // Get form data and extract password fields
   const formData = new FormData(e.target);
   const password = formData.get("password");
   const confirmPassword = formData.get("confirmPassword");
@@ -8,14 +10,20 @@ document.getElementById("validationForm").addEventListener("submit", (e) => {
   const passwordInput = document.getElementById("password");
   const confirmPasswordInput = document.getElementById("confirmPassword");
 
+  // Validate password requirements:
+  // - Minimum length of 8 characters
+  // - Must contain at least one number
+  // - Must contain at least one letter
+  // - Must match confirmation password
   const isValid =
     password.length >= 8 &&
     /[0-9]/.test(password) &&
     /[a-zA-Z]/.test(password) &&
     password === confirmPassword;
 
-  // Управление классами для полей ввода
+  // Update UI based on validation result
   if (isValid) {
+    // Remove error styling and show success message
     passwordInput.classList.remove("is-danger");
     confirmPasswordInput.classList.remove("is-danger");
     resultDiv.innerHTML = `
@@ -24,6 +32,7 @@ document.getElementById("validationForm").addEventListener("submit", (e) => {
             </div>
         `;
   } else {
+    // Add error styling and show error message
     passwordInput.classList.add("is-danger");
     confirmPasswordInput.classList.add("is-danger");
     resultDiv.innerHTML = `
