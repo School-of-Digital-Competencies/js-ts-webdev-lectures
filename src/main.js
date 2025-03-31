@@ -84,20 +84,36 @@ function Product(product) {
 }
 
 /**
+ * Creates DOM element with list of products
+ * @param {Array} products - Array of product objects to display
+ * @returns {HTMLElement} DOM element containing product cards
+ */
+function ProductList(products) {
+  const columns = document.createElement("div");
+  columns.classList.add("columns", "is-multiline");
+  
+  products.forEach((product) => {
+    columns.append(Product(product));
+  });
+    
+  return columns;
+}
+
+/**
  * Renders products based on selected category
  * @param {string} category - Category to filter products by. 'all' shows all products
  */
 function renderProducts(category) {
   // Clear existing products from container
   container.innerHTML = "";
-
-  // Filter and render products based on category
-  products
-    .filter((product) => category === "all" || product.category === category)
-    .forEach((product) => {
-      // Create and append product card element
-      container.append(Product(product));
-    });
+  
+  // Filter products based on category
+  const filteredProducts = products.filter(
+    (product) => category === "all" || product.category === category
+  );
+  
+  // Create and append product list with filtered products
+  container.append(ProductList(filteredProducts));
 }
 
 // Add event delegation for tab clicks
