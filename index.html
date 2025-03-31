@@ -32,6 +32,9 @@
           <li data-tab="validation-form">
             <a>Валидация формы</a>
           </li>
+          <li data-tab="dynamic-form">
+            <a>Динамическая форма</a>
+          </li>
         </ul>
       </div>
 
@@ -140,10 +143,41 @@
           <div id="validationResult" class="mt-4"></div>
         </div>
       </div>
+
+      <div id="dynamic-form" class="tab-content">
+        <div class="box">
+          <h2 class="subtitle">Динамическая форма</h2>
+
+          <div class="box">
+            <div class="field">
+              <label class="label">Add Dynamic Inputs</label>
+              <div class="control">
+                <button id="addTextInput" class="button is-primary">
+                  Add Text Input
+                </button>
+                <button id="addCheckbox" class="button is-info">
+                  Add Checkbox
+                </button>
+                <button id="showDynamicValues" class="button is-success">
+                  Show Values
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <form id="dynamicForm"></form>
+
+          <div id="dynamicOutput" class="box is-hidden">
+            <h2 class="subtitle">Dynamic Input Values:</h2>
+            <pre id="dynamicValuesOutput"></pre>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="./src/tabs.js"></script>
     <script src="./src/basic-form.js"></script>
     <script src="./src/validation-form.js"></script>
+    <script src="./src/dynamic-form.js"></script>
   </body>
 </html>
