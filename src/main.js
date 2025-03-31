@@ -53,6 +53,37 @@ const container = document.getElementById("product-container");
 const tabsContainer = document.querySelector(".tabs ul");
 
 /**
+ * Creates DOM element for product card
+ * @param {Object} product - Product object with name, price, description, image and category
+ * @returns {HTMLElement} DOM element for product card
+ */
+function Product(product) {
+  const column = document.createElement("div");
+  column.classList.add("column", "is-one-third");
+  
+  column.innerHTML = `
+    <div class="card">
+      <div class="card-image">
+        <figure class="image is-4by3">
+          <img src="./src/assets/${product.image}" alt="${product.name}">
+        </figure>
+      </div>
+      <div class="card-content">
+        <p class="title is-5">${product.name}</p>
+        <p class="subtitle is-6">${product.price}</p>
+        <p>${product.description}</p>
+        <div class="buttons mt-3">
+          <button class="button is-primary">Purchase</button>
+          <button class="button is-light">Add to Bag</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  return column;
+}
+
+/**
  * Renders products based on selected category
  * @param {string} category - Category to filter products by. 'all' shows all products
  */
@@ -64,35 +95,8 @@ function renderProducts(category) {
   products
     .filter((product) => category === "all" || product.category === category)
     .forEach((product) => {
-      // Create column container for product card
-      const column = document.createElement("div");
-      column.classList.add("column", "is-one-third");
-
-      // Create card element for product
-      const card = document.createElement("div");
-      card.classList.add("card");
-
-      // Set card content with product information
-      card.innerHTML = `
-                <div class="card-image">
-                    <figure class="image is-4by3">
-                        <img src="./src/assets/${product.image}" alt="${product.name}">
-                    </figure>
-                </div>
-                <div class="card-content">
-                    <p class="title is-5">${product.name}</p>
-                    <p class="subtitle is-6">${product.price}</p>
-                    <p>${product.description}</p>
-                    <div class="buttons mt-3">
-                        <button class="button is-primary">Purchase</button>
-                        <button class="button is-light">Add to Bag</button>
-                    </div>
-                </div>
-            `;
-
-      // Append card to column and column to container
-      column.appendChild(card);
-      container.appendChild(column);
+      // Create and append product card element
+      container.append(Product(product));
     });
 }
 
