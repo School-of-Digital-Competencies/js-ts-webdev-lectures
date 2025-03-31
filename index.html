@@ -52,7 +52,7 @@
             <div class="field">
               <label class="label">Имя</label>
               <div class="control">
-                <input class="input" type="text" name="name" required />
+                <input class="input" type="number" min="4" max="6" name="name" required />
               </div>
             </div>
             <!-- Email input field -->
@@ -82,19 +82,24 @@
               <label class="label">Любимый цвет</label>
               <div class="control">
                 <label class="radio">
-                  <input type="radio" name="favoriteColor" value="red" required>
+                  <input
+                    type="radio"
+                    name="favoriteColor"
+                    value="red"
+                    required
+                  />
                   Красный
                 </label>
               </div>
               <div class="control">
                 <label class="radio">
-                  <input type="radio" name="favoriteColor" value="green">
+                  <input type="radio" name="favoriteColor" value="green" />
                   Зеленый
                 </label>
               </div>
               <div class="control">
                 <label class="radio">
-                  <input type="radio" name="favoriteColor" value="blue">
+                  <input type="radio" name="favoriteColor" value="blue" />
                   Синий
                 </label>
               </div>
@@ -208,7 +213,9 @@
           <form id="dynamicForm">
             <div class="field">
               <div class="control">
-                <button type="submit" class="button is-primary">Отправить форму</button>
+                <button type="submit" class="button is-primary">
+                  Отправить форму
+                </button>
               </div>
             </div>
           </form>

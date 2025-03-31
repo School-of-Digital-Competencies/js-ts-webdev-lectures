@@ -50,7 +50,7 @@ addTextInputBtn.addEventListener("click", () => {
             `;
 
   // Append the new field to the form
-  dynamicForm.appendChild(fieldDiv);
+  dynamicForm.append(fieldDiv);
 });
 
 // Event listener for adding checkbox fields
