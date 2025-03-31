@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sweet Sweets</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css"
+    />
+  </head>
+  <body>
+    <section class="section">
+      <div class="container">
+        <h1 class="title has-text-primary">Sweet Sweets</h1>
+
+        <div class="tabs is-left">
+          <ul>
+            <li class="is-active" data-category="all"><a>Sweet Stuff</a></li>
+            <li data-category="marshmallow"><a>Marshmallow</a></li>
+            <li data-category="cookies"><a>Cookies</a></li>
+            <li data-category="ice-cream"><a>Ice Cream</a></li>
+            <li data-category="cake"><a>Cake</a></li>
+          </ul>
+        </div>
+
+        <div class="columns is-multiline" id="product-container"></div>
+      </div>
+    </section>
+
+    <script src="./src/main.js"></script>
+  </body>
+</html>
