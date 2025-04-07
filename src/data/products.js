@@ -2,14 +2,14 @@
 export const products = [
   {
     name: "M&M Jar",
-    price: "$13.99",
+    price: "$13.9009",
     description: "They've graduated — now it's time to celebrate!",
     image: "mmjar.jpg",
     category: "sweet-stuff",
   },
   {
     name: "Macarons",
-    price: "$3.99",
+    price: "$3.9509",
     description:
       "Flavors include: Original, Spearmint, Wintergreen, Mint Bliss, Wild Blueberry Twist.",
     image: "macarons.jpg",
@@ -32,7 +32,7 @@ export const products = [
   },
   {
     name: "Cupcakes",
-    price: "$7.99",
+    price: "$7.919",
     description:
       "Our fruit cakes are the ideal choice for those who prefer a classic taste.",
     image: "cupcakes.jpg",

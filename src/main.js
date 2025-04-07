@@ -17,8 +17,9 @@ tabsContainer.addEventListener("click", function (event) {
   document.querySelector(".tabs .is-active").classList.remove("is-active");
   tab.classList.add("is-active");
 
-  // Render products for selected category
-  renderProducts(products, tab.getAttribute("data-category"), container);
+  // Get category from data attribute and render products
+  const category = tab.getAttribute("data-category");
+  renderProducts(products, category, container);
 });
 
 document.addEventListener("DOMContentLoaded", () => {

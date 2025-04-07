@@ -1,3 +1,10 @@
+import {
+  formatPriceForDisplay,
+  isSweetStuff,
+  isCookie,
+  isCake,
+} from "../utils/productUtils.js";
+
 /**
  * Creates DOM element for product card
  * @param {Object} product - Product object with name, price, description, image and category
@@ -15,8 +22,18 @@ export function Product(product) {
         </figure>
       </div>
       <div class="card-content">
+        
+        <p class="subtitle is-6 ${
+          isSweetStuff(product)
+            ? "has-text-info"
+            : isCookie(product)
+            ? "has-text-success"
+            : isCake(product)
+            ? "has-text-danger"
+            : "has-text-warning"
+        }">${product.category}</p>
         <p class="title is-5">${product.name}</p>
-        <p class="subtitle is-6">${product.price}</p>
+        <p class="subtitle is-6">${formatPriceForDisplay(product.price)}</p>
         <p>${product.description}</p>
         <div class="buttons mt-3">
           <button class="button is-primary">Purchase</button>

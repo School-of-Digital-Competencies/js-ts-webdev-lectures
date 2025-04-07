@@ -1,4 +1,4 @@
-import { Product } from './Product.js';
+import { Product } from "./Product.js";
 
 /**
  * Creates DOM element with list of products
@@ -8,10 +8,10 @@ import { Product } from './Product.js';
 export function ProductList(products) {
   const columns = document.createElement("div");
   columns.classList.add("columns", "is-multiline");
-  
+
   products.forEach((product) => {
     columns.append(Product(product));
   });
-    
+
   return columns;
-} 
+}
