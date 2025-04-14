@@ -1,11 +1,12 @@
-import "./style.css";
-import { createTodoController } from "./controllers/TodoController";
+import "./styles/todoStyles.css";
+import { createTodoViewModel } from "./viewmodels/TodoViewModel";
 
 document.addEventListener("DOMContentLoaded", () => {
   const app = document.getElementById("app");
   
   if (app) {
-    const controller = createTodoController();
-    app.append(controller.getRoot());
+    const viewModel = createTodoViewModel();
+    const viewSwitcher = viewModel.createViewSwitcher();
+    app.append(viewSwitcher.getRoot());
   }
 });
