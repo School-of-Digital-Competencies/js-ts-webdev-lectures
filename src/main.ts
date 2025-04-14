@@ -1,12 +1,11 @@
 import "./style.css";
-
-import { Gallery } from "./components/Gallery";
-import images from "./db/images.json";
+import { createTodoController } from "./controllers/TodoController";
 
 document.addEventListener("DOMContentLoaded", () => {
   const app = document.getElementById("app");
-
-  const gallery = Gallery(images);
-
-  app?.append(gallery);
+  
+  if (app) {
+    const controller = createTodoController();
+    app.append(controller.getRoot());
+  }
 });

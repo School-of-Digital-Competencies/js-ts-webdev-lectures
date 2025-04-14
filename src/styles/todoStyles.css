@@ -1,0 +1,260 @@
+/* Minimalistic style for todo app */
+.minimal-todo-app {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Input field styling for minimal view */
+.minimal-todo-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+/* List container styling */
+.minimal-todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Individual todo item styling */
+.minimal-todo-item {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Styling for completed todo items */
+.minimal-todo-item.completed .minimal-todo-text {
+  text-decoration: line-through;
+  color: #888;
+}
+
+/* Checkbox styling */
+.minimal-todo-checkbox {
+  margin-right: 10px;
+}
+
+/* Todo text styling */
+.minimal-todo-text {
+  flex-grow: 1;
+}
+
+/* Delete button styling */
+.minimal-todo-delete {
+  background: none;
+  border: none;
+  color: #ff4444;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 0 5px;
+}
+
+/* Modern style with Tailwind-inspired design */
+.modern-todo-app {
+  max-width: 28rem;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Header styling for modern view */
+.modern-todo-header {
+  text-align: center;
+  color: #1a202c;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+/* Input container styling */
+.modern-todo-input-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Modern input field styling */
+.modern-todo-input {
+  flex-grow: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #4a5568;
+  background-color: #f7fafc;
+  transition: all 0.2s;
+}
+
+/* Input focus state */
+.modern-todo-input:focus {
+  border-color: #4299e1;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+  background-color: #ffffff;
+}
+
+/* Add button styling */
+.modern-todo-add-button {
+  padding: 0.75rem 1rem;
+  background: #4299e1;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  transition: all 0.2s;
+}
+
+/* Add button hover state */
+.modern-todo-add-button:hover {
+  background: #3182ce;
+}
+
+/* Add button focus state */
+.modern-todo-add-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+/* Modern list container */
+.modern-todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Modern todo item styling */
+.modern-todo-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  background: #ffffff;
+  border-radius: 0.375rem;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s;
+}
+
+/* Todo item hover effect */
+.modern-todo-item:hover {
+  border-color: #cbd5e0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Completed todo item styling */
+.modern-todo-item.completed .modern-todo-text {
+  text-decoration: line-through;
+  color: #a0aec0;
+}
+
+/* Modern checkbox styling */
+.modern-todo-checkbox {
+  margin-right: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  border: 1px solid #cbd5e0;
+}
+
+/* Checked checkbox state */
+.modern-todo-checkbox:checked {
+  background-color: #4299e1;
+  border-color: #4299e1;
+}
+
+/* Modern todo text styling */
+.modern-todo-text {
+  flex-grow: 1;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #2d3748;
+}
+
+/* Modern delete button styling */
+.modern-todo-delete {
+  padding: 0.5rem 1rem;
+  background: #f56565;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  transition: all 0.2s;
+}
+
+/* Delete button hover state */
+.modern-todo-delete:hover {
+  background: #e53e3e;
+}
+
+/* Delete button focus state */
+.modern-todo-delete:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.5);
+}
+
+/* View switcher container */
+.todo-switcher {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+/* View selection dropdown */
+.todo-view-select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 2px solid #3498db;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: white;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+/* View selection focus state */
+.todo-view-select:focus {
+  outline: none;
+  border-color: #2980b9;
+}
+
+/* Container for todo views */
+.todo-views-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Responsive layout for multiple views */
+@media (min-width: 768px) {
+  .todo-views-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .todo-views-container > * {
+    flex: 1;
+    min-width: 300px;
+    margin: 0 10px;
+  }
+} 
