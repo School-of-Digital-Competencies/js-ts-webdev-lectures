@@ -1,0 +1,19 @@
+{
+  "name": "bulma-form",
+  "version": "1.0.0",
+  "description": "Form with Bulma styling and Zod validation",
+  "main": "src/main.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "bulma": "^0.9.4",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "vite": "^6.2.2",
+    "typescript": "^5.1.6"
+  }
+}
