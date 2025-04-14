@@ -32,7 +32,7 @@ export function createTodoView() {
       text.className = 'todo-text';
       
       const deleteBtn = document.createElement('button');
-      deleteBtn.textContent = '×';
+      deleteBtn.textContent = 'Удалить';
       deleteBtn.className = 'todo-delete';
       
       li.append(checkbox);

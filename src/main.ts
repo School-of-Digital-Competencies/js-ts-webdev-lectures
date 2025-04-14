@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
   if (app) {
     const viewModel = createTodoViewModel();
-    const viewSwitcher = viewModel.createViewSwitcher();
-    app.append(viewSwitcher.getRoot());
+    const todoView = viewModel.createTodoView();
+    app.append(todoView.getRoot());
   }
 });

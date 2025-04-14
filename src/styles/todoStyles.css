@@ -65,7 +65,8 @@
   padding: 1.5rem;
   background: #ffffff;
   border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 /* Header styling for modern view */
@@ -251,10 +252,106 @@
     flex-wrap: wrap;
     justify-content: space-between;
   }
-  
+
   .todo-views-container > * {
     flex: 1;
     min-width: 300px;
     margin: 0 10px;
   }
-} 
+}
+
+/* Base TodoView styles */
+.todo-app {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.todo-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  background-color: #f7fafc;
+  transition: all 0.2s;
+}
+
+.todo-input:focus {
+  border-color: #4299e1;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+  background-color: #ffffff;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 8px;
+  background: #ffffff;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s;
+}
+
+.todo-item:hover {
+  border-color: #cbd5e0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.todo-checkbox {
+  margin-right: 12px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid #cbd5e0;
+}
+
+.todo-checkbox:checked {
+  background-color: #4299e1;
+  border-color: #4299e1;
+}
+
+.todo-text {
+  flex-grow: 1;
+  font-size: 16px;
+  color: #2d3748;
+}
+
+.todo-delete {
+  padding: 6px 12px;
+  background: #f56565;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.todo-delete:hover {
+  background: #e53e3e;
+}
+
+.todo-delete:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.5);
+}
+
+.completed .todo-text {
+  text-decoration: line-through;
+  color: #a0aec0;
+}
