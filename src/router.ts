@@ -1,20 +1,24 @@
 import Navigo from "navigo";
-import { HomePage } from "./pages/HomePage";
+import { PostsPage } from "./pages/PostsPage";
 import { PostPage } from "./pages/PostPage";
 
 const router = new Navigo("/");
 
-function handleRouteChange(handler: () => Promise<void>, params?: unknown) {
+function handleRouteChange(
+  handler: (params?: unknown) => Promise<HTMLElement>,
+  params?: unknown
+) {
   const app = document.getElementById("app");
 
   if (app) {
-    console.log("handleRouteChange app", app);
+    console.log("handleRouteChange start rendering new page inside", app);
 
-    app.innerHTML = "";
+    app.innerHTML = "Loading... Loading... Loading...";
 
     handler(params).then((page) => {
       console.log("handleRouteChange page", page);
 
+      app.innerHTML = "";
       app.append(page);
     });
   }
@@ -22,7 +26,17 @@ function handleRouteChange(handler: () => Promise<void>, params?: unknown) {
 
 router
   .on({
-    "/posts": () => handleRouteChange(HomePage),
+    "/posts": () => {
+      console.log("catch /posts page");
+
+      return handleRouteChange(PostsPage);
+    },
+
+    "/tasks": () => {
+      console.log("catch tasks url change");
+
+      return handleRouteChange(PostsPage);
+    },
 
     "/posts/:postId": (params: { data: { postId: string } }) =>
       handleRouteChange(PostPage, params),

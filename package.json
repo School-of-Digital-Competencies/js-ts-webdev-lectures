@@ -4,7 +4,9 @@
   "description": "Source code is available on different branches",
   "main": "index.js",
   "scripts": {
-    "serve": "vite"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
   "author": "",
   "license": "ISC",
