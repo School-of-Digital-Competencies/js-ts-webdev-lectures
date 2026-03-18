@@ -1,10 +1,10 @@
 ---
 theme: nord
 colorSchema: dark
-title: "Week 1 — Professional JS Environment"
+title: "Week 2 — Event Loop & Call Stack"
 info: |
   ## JS & TS for Browser Applications
-  Week 1: Professional JS Environment
+  Week 2: Event Loop & Call Stack
 class: text-left
 drawings:
   persist: false
@@ -12,357 +12,604 @@ transition: slide-left
 mdc: true
 layout: default
 ---
-# Professional JS Environment
+# Event Loop & Call Stack
 
 ## Agenda
 
-
-1. How JS runs in the browser
-2. HTML page structure & critical rendering path
-3. Chrome DevTools — your daily driver
-4. npm & the Node ecosystem
-5. Vite — instant dev server
-6. Live reload & running JS in the browser
-
+1. Call stack & execution order
+2. JavaScript is single-threaded
+3. Web APIs — where async code lives
+4. Event loop & macrotask queue
+5. `setTimeout` / `setInterval` timing model
+6. Promises — `new Promise`, `.then()`, `.catch()`, `.finally()`
 
 ---
 layout: section
 ---
 
-# How JavaScript Runs in the Browser
+# Part 1 — The Call Stack
 
 ---
 
-# The Browser Environment
+# What Is the Call Stack?
 
-The browser is not just a viewer — it runs your code
+The call stack is a **LIFO data structure** that tracks which function is currently running.
 
-<div class="grid grid-cols-3 gap-6 mt-8 text-center">
+```js
+function greet(name) {
+  return `Hello, ${name}!`
+}
+
+function sayHello() {
+  const msg = greet('Alice')
+  console.log(msg)
+}
+
+sayHello()
+```
+
+<v-clicks>
+
+- Every time a function is **called**, a new **execution context** is pushed onto the stack
+- When it **returns**, the execution context is popped off
+- The engine always executes the **top** execution context
+
+</v-clicks>
+
+---
+
+# Call Stack — Step by Step
+
+<div class="grid grid-cols-2 gap-6 mt-4">
+<div>
+
+```js
+function greet(name) {
+  return `Hello, ${name}!`
+}
+
+function sayHello() {
+  const msg = greet('Alice')
+  console.log(msg)
+}
+
+sayHello()
+```
+
+</div>
+<div>
+
+```
+Step 1 — sayHello() called
+ ┌──────────────────┐
+ │   sayHello()     │  ← executing
+ └──────────────────┘
+
+Step 2 — greet() called inside
+ ┌──────────────────┐
+ │   greet()        │  ← executing
+ ├──────────────────┤
+ │   sayHello()     │  ← waiting
+ └──────────────────┘
+
+Step 3 — greet() returns
+ ┌──────────────────┐
+ │   sayHello()     │  ← resumes
+ └──────────────────┘
+
+Step 4 — sayHello() returns
+ (stack is empty)
+```
+
+</div>
+</div>
+
+<v-click>
+
+**Rule:** The engine only processes one execution context at a time. Nothing else runs while the stack is occupied.
+
+</v-click>
+
+---
+
+# Stack Overflow — When Recursion Goes Wrong
+
+```js
+function infinite(i) {
+  console.log(i)
+  return infinite(i + 1) // never reaches a base case
+}
+
+infinite(1) // ❌ RangeError: Maximum call stack size exceeded
+```
+
+<v-clicks>
+
+- V8 allows roughly 10 000–15 000 execution contexts before crashing
+- Every recursive call adds an execution context — without a **base case**, the stack fills up completely
+- The browser throws a `RangeError` and unwinds the stack
+
+Recursion is powerful, but always needs a clear termination condition.
+
+</v-clicks>
+
+---
+
+# Part 2 — Single Thread & Web APIs
+
+## JavaScript Is Single-Threaded
+
+<div class="grid grid-cols-2 gap-8 mt-6">
   <div v-click class="border border-gray-500 rounded-lg p-5">
-    <div class="text-3xl mb-3">🖥️</div>
-    <strong>DOM</strong>
-    <p class="text-sm mt-2 opacity-70">Document Object Model — the HTML tree your JS can read and modify</p>
-  </div>
-  <div v-click class="border border-gray-500 rounded-lg p-5">
-    <div class="text-3xl mb-3">⚙️</div>
-    <strong>JS Engine (V8)</strong>
-    <p class="text-sm mt-2 opacity-70">Parses, compiles and executes your JavaScript code</p>
+    <div class="text-3xl mb-3">🧵</div>
+    <strong>One call stack</strong>
+    <p class="text-sm mt-2 opacity-70">Only one piece of code runs at a time — no true parallelism inside JS</p>
   </div>
   <div v-click class="border border-gray-500 rounded-lg p-5">
     <div class="text-3xl mb-3">🌐</div>
-    <strong>Web APIs</strong>
-    <p class="text-sm mt-2 opacity-70">fetch, setTimeout, localStorage, History…</p>
+    <strong>Web APIs handle the rest</strong>
+    <p class="text-sm mt-2 opacity-70">fetch, setTimeout, DOM events — these run <em>outside</em> the JS engine, inside the browser</p>
   </div>
 </div>
 
----
-
-# JS Engine — From Source to Execution
-
-```
-Source code (.js)
-       ↓  Parser
-  AST (Abstract Syntax Tree)
-       ↓  Compiler (Ignition → TurboFan)
-  Bytecode / Optimised Machine Code
-       ↓  Execution
-     Result
-```
-
-<v-clicks>
-
-- The engine **just-in-time compiles** your code — no separate build step for you
-- V8 powers both Chrome **and** Node.js
-- Other engines: SpiderMonkey (Firefox), JavaScriptCore (Safari)
-
-</v-clicks>
-
----
-layout: section
----
-
-# HTML Page with JavaScript
-
----
-
-# Anatomy of an HTML Page with JS
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>My App</title>
-    <!-- Stylesheet loaded before JS — no FOUC -->
-    <link rel="stylesheet" href="style.css" />
-    <script src="some-library.js" defer></script>
-    <script src="another-library.js" async></script>
-  </head>
-  <body>
-    <h1 id="title">Hello</h1>
-
-    <!-- Script at end of body: DOM is ready, no blocking -->
-    <script src="main.js"></script>
-
-    <!-- OR: modern module script anywhere in <head> -->
-    <!-- <script type="module" src="main.js"></script> -->
-  </body>
-</html>
-```
-
 <v-click>
 
-`type="module"` scripts are **deferred by default** — they never block HTML parsing.
+```js
+// setTimeout does NOT pause the JS engine
+// It hands the timer off to a Web API
+setTimeout(() => {
+  console.log('fired after 2s')
+}, 2000)
+
+console.log('this runs immediately') // ← printed first
+```
 
 </v-click>
 
 ---
 
-# Three Ways to Run JS in the Browser
-
-<v-clicks>
-
-**1. Inline `<script>` in HTML**  
-Simplest but no modules, no tooling — fine for tiny experiments
-```html
-<script>
-  console.log('Hello from inline script')
-</script>
-```
-
-**2. External `.js` file (ES Module)**  
-Proper separation; must use `type="module"` for `import`/`export`
-```html
-<script type="module" src="./main.js"></script>
-```
-
-**3. DevTools Console**  
-Live REPL — runs in the current page context, great for quick experiments
-```js
-document.title = 'Changed from Console!'
-```
-
-</v-clicks>
-
----
-
-# Critical Rendering Path
-
-The browser follows a fixed sequence before anything appears on screen:
+# The Browser Runtime — Full Picture
 
 ```
-HTML bytes → Tokens → DOM
-CSS bytes  → Tokens → CSSOM   ┐
-                               ├→ Render Tree → Layout → Paint → Composite
-                          JS can block both DOM and CSSOM construction
+
+┌──────────────────────────────────────────────────────────────┐
+│                     JS Engine (V8)                           │
+│                                                              │
+│   ┌─────────────────┐        ┌────────────────────────┐      │
+│   │   Call Stack    │        │   Heap (objects)       │      │
+│   │                 │        │                        │      │
+│   │  [ main()     ] │        │  { id: 1, name: ... }  │      │
+│   └─────────────────┘        └────────────────────────┘      │
+└─────────────────┬────────────────────────────────────────────┘
+                  ↑  Event Loop pushes tasks here when stack is empty
+┌─────────────────┴────────────────────────────────────────────┐
+│              Macrotask Queue  (a.k.a. Task Queue)            │
+│   [ timer cb ]    [ click handler ]    [ network cb ]        │
+└─────────────────┬────────────────────────────────────────────┘
+                  ↑  Web APIs push callbacks here when they finish
+┌─────────────────┴────────────────────────────────────────────┐
+│                        Web APIs                              │
+│       setTimeout / setInterval     fetch     DOM events      │
+└──────────────────────────────────────────────────────────────┘
 ```
 
-<v-clicks>
-
-- **Parser-blocking** — a `<script>` without `defer`/`async` pauses HTML parsing until it downloads and runs
-- **`defer`** — script runs after HTML is parsed, in order; same behaviour as `type="module"`
-- **`async`** — script runs as soon as it downloads, out of order — avoid for app code
-- Rule of thumb: always use `type="module"` or `defer`; never put plain scripts in `<head>`
-
-</v-clicks>
-
----
-layout: section
----
-
-# Chrome DevTools
-
----
-
-# DevTools — Five Panels You Must Know
-
-| Panel | What it does |
-| --- | --- |
-| **Elements** | Inspect & live-edit the DOM and CSS |
-| **Console** | Run JS, read errors and `console.log` output |
-| **Sources** | Debugger — breakpoints, step-by-step execution |
-| **Network** | All HTTP requests, payloads, timing |
-| **Performance** | Profile rendering and script bottlenecks |
-
-<div class="mt-6 text-center opacity-70 text-sm">
-  Open with <kbd>F12</kbd> or <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd>
+<div class="mt-4 text-sm opacity-60 text-center">
+  Visualise it live → <a href="https://www.jsv9000.app/" target="_blank">jsv9000.app</a>
 </div>
 
 ---
-
-# Console — Your Best Friend
-
-```js
-console.log('value:', value)           // print anything
-console.table([{ id: 1, name: 'A' }]) // tabular output
-console.dir(element)                   // DOM node as JS object
-console.time('label')
-// ... code ...
-console.timeEnd('label')               // measure elapsed time
-```
-
-The console is also a **live REPL** — run any JS in the page context:
-
-```js
-document.querySelector('h1').textContent = 'Patched!'
-```
-
----
-
-# Sources Panel — Breakpoints
-
-1. Open **Sources** → navigate to your `.js` file
-2. Click a line number → blue marker = breakpoint
-3. Reload the page or trigger the code path
-4. Use the controls to step through execution:
-
-| Key | Action |
-| --- | --- |
-| `F8` | Resume / Pause |
-| `F10` | Step Over (next line) |
-| `F11` | Step Into (function call) |
-| `Shift+F11` | Step Out |
-
-> "A breakpoint is worth a thousand `console.log` calls."
-
----
 layout: section
 ---
 
-# The Node Ecosystem & npm
+# Part 3 — Event Loop & Macrotask Queue
 
 ---
 
-# What is npm?
+# The Event Loop — One Rule
 
 <v-clicks>
 
-- **Node Package Manager** — ships with Node.js
-- Registry with 2 million+ open-source packages
-- Also a CLI: `npm install`, `npm run`, `npm publish`
+The event loop continuously checks a single condition:
 
-</v-clicks>
+> *Is the call stack empty?*
+> - **Yes** → take the next task from the queue and push it onto the stack
+> - **No** → wait
 
-```bash
-# First, install Node.js (includes npm)
-node --version   # v22.x
-npm --version    # 10.x
 ```
-
-Every project starts with a `package.json`:
-
-```json
-{
-  "name": "my-app",
-  "scripts": { "dev": "vite", "build": "vite build" },
-  "dependencies": {},
-  "devDependencies": { "vite": "^6.0.0" }
+while (true) {
+  if (callStack.isEmpty() && taskQueue.hasTask()) {
+    callStack.push(taskQueue.dequeue())
+  }
 }
 ```
 
+This is why `setTimeout(fn, 0)` does **not** mean "run right now" —  
+it means "run as soon as the current stack is clear."
+
+</v-clicks>
+
 ---
 
-# node_modules & the Lock File
+# Macrotask Queue — What Goes In
 
-```
-project/
-├── package.json        ← you edit this
-├── package-lock.json   ← auto-generated, always commit it
-└── node_modules/       ← never commit — add to .gitignore
-    └── vite/
-        └── ...
-```
+<v-clicks>
 
-| Command | What it does |
+| Source | When the callback is queued |
 | --- | --- |
-| `npm install` | Install all deps from the lock file |
-| `npm install vite` | Add a new runtime dependency |
-| `npm install -D eslint` | Add a dev-only dependency |
-| `npm run dev` | Run the `"dev"` script |
+| `setTimeout(fn, delay)` | After at least `delay` ms |
+| `setInterval(fn, delay)` | Every ~`delay` ms |
+| DOM event listeners (click, input…) | When the user interacts |
+
+Each macrotask runs **to completion** before the next one starts.  
+That's why a long-running synchronous function blocks the entire UI.
+
+</v-clicks>
+
+---
+
+# Why Long Sync Code Freezes the UI
+
+```js
+// This blocks the browser for ~3 seconds:
+// no clicks, no animations, no scroll
+function doHeavyWork() {
+  const start = Date.now()
+  while (Date.now() - start < 3000) {
+    // busy-waiting — holding the call stack hostage
+  }
+}
+
+btn.addEventListener('click', doHeavyWork)
+```
+
+<v-click>
+
+The event loop cannot process any queued task (render, click, scroll)  
+while `doHeavyWork` occupies the call stack.
+
+</v-click>
+
+<v-click>
+
+**Solutions:** `setTimeout` chunking &nbsp;·&nbsp; Web Workers &nbsp;·&nbsp; `async`/`await` with I/O
+
+</v-click>
 
 ---
 layout: section
 ---
 
-# Vite — Instant Dev Server
+# Part 4 — setTimeout & setInterval
 
 ---
 
-# Why Vite?
+# setTimeout — Minimum Delay, Not Exact Timing
 
-| | Webpack (old school) | Vite (modern) |
-| --- | --- | --- |
-| Cold start | Bundle everything first | Serve files on demand |
-| HMR speed | Re-bundle changed modules | Native ES module swap |
-| Config size | Large | Minimal |
-| DX | Complex | Just works |
+```js
+console.log('before')
+
+setTimeout(() => {
+  console.log('inside timeout')
+}, 0) // delay = 0 ms
+
+console.log('after')
+```
+
+<v-clicks>
+
+Output:
+```
+before
+after
+inside timeout   ← runs AFTER all synchronous code completes
+```
+
+`0 ms` means: "queue this for the very next available turn of the event loop."  
+Browsers enforce a **minimum delay of ~4 ms** for nested/chained `setTimeout` calls.
+
+</v-clicks>
+
+---
+
+# setInterval — Repeating Timers
+
+```js
+let count = 0
+
+const id = setInterval(() => {
+  count++
+  console.log('tick', count)
+
+  if (count === 3) {
+    clearInterval(id) // stop the interval
+  }
+}, 1000)
+```
 
 <v-click>
 
-Vite uses **esbuild** (written in Go) for dependency pre-bundling → near-instant startup even with large `node_modules`.
+⚠️ If the callback takes **longer than the interval**, ticks pile up in the queue.  
+For smooth, frame-accurate animation use `requestAnimationFrame` instead.  
+For precise chained delays, prefer recursive `setTimeout`.
 
 </v-click>
 
 ---
 
-# Create a Vite Project — Live Demo
+# 🔍 Predict the Output — Quiz 1
 
-```bash
-npm create vite@latest my-app
-# ↑ Choose: Vanilla → JavaScript
+```js
+console.log('A')
 
-cd my-app
-npm install
-npm run dev
+setTimeout(() => console.log('B'), 0)
+
+console.log('C')
 ```
 
-Resulting project structure:
+<v-click>
 
 ```
-my-app/
-├── index.html      ← entry point (Vite serves this directly)
-├── main.js         ← your JS entry
-├── style.css
-└── package.json
+A
+C
+B
 ```
+
+Synchronous code (`A`, `C`) runs first.  
+`B` is queued as a macrotask and executes only after the current stack empties.
+
+</v-click>
+
+---
+
+# 🔍 Predict the Output — Quiz 2
+
+```js
+console.log('start')
+
+setTimeout(() => console.log('timeout 1'), 100)
+setTimeout(() => console.log('timeout 2'), 0)
+
+console.log('end')
+```
+
+<v-click>
+
+```
+start
+end
+timeout 2
+timeout 1
+```
+
+Both callbacks are macrotasks. They execute in **timer-expiration order** —  
+`timeout 2` fires first because its delay (0 ms) expires before 100 ms.
+
+</v-click>
 
 ---
 layout: section
 ---
 
-# Live Reload & Running JS in the Browser
+# Part 5 — Promises
 
 ---
 
-# How Vite's Dev Server Works
-
-When you run `npm run dev`, Vite starts a local HTTP server and watches your files:
-
-```
-You edit main.js  →  Vite detects the change
-                  →  Sends a tiny HMR update over WebSocket
-                  →  Browser swaps the module — no full page reload
-```
+# What Is a Promise?
 
 <v-clicks>
 
-- **HMR (Hot Module Replacement)** — only the changed module is replaced, state is preserved where possible
-- **Full reload** happens only when the HTML or a non-HMR boundary changes
-- The URL stays the same: `http://localhost:5173`
+A **Promise** is an object representing the eventual result of an asynchronous operation.
+
+Think of it like ordering food at a restaurant:
+
+- You place an order → receive a **receipt** (the Promise object)
+- You attach instructions: *"when the food is ready, do this"* (`.then()`)
+- While waiting, you can do other things — you're not blocked
+- If the kitchen fails → you're notified (`.catch()`)
 
 </v-clicks>
 
 ---
 
-# Summary — Week 1
+# Promise States
+
+<div class="grid grid-cols-3 gap-6 mt-8 text-center">
+  <div v-click class="border border-yellow-500 rounded-lg p-5">
+    <div class="text-3xl mb-3">⏳</div>
+    <strong>Pending</strong>
+    <p class="text-sm mt-2 opacity-70">Initial state — the async operation has not completed yet</p>
+  </div>
+  <div v-click class="border border-green-500 rounded-lg p-5">
+    <div class="text-3xl mb-3">✅</div>
+    <strong>Fulfilled</strong>
+    <p class="text-sm mt-2 opacity-70">Operation completed successfully; the result value is available</p>
+  </div>
+  <div v-click class="border border-red-500 rounded-lg p-5">
+    <div class="text-3xl mb-3">❌</div>
+    <strong>Rejected</strong>
+    <p class="text-sm mt-2 opacity-70">Operation failed; an error reason is available</p>
+  </div>
+</div>
+
+<v-click>
+
+A promise transitions **Pending → Fulfilled** or **Pending → Rejected** — exactly once.  
+Once settled, its state is **immutable** — it never changes again.
+
+</v-click>
+
+---
+
+# Creating a Promise
+
+```js
+const p = new Promise((resolve, reject) => {
+  // The executor function runs synchronously (right now)
+  setTimeout(() => {
+    const success = true
+
+    if (success) {
+      resolve('Data loaded!') // → fulfilled
+    } else {
+      reject(new Error('Something went wrong')) // → rejected
+    }
+  }, 1000)
+})
+```
 
 <v-clicks>
 
-- JS runs in the browser via the **V8 engine** alongside the DOM and Web APIs
-- **DevTools** (Elements, Console, Sources) are your primary debugging tools
-- **npm** manages packages; `package.json` + lock file are the source of truth
-- **Vite** gives you an instant dev server with native ES module support
-- ES Modules (`import` / `export`) will be covered alongside **TypeScript** in Week 9
+- The **executor** `(resolve, reject) => { ... }` runs **immediately** when `new Promise()` is called
+- `resolve(value)` — settles the promise as fulfilled, value becomes the result
+- `reject(reason)` — settles the promise as rejected, reason is the error
+- Only the **first** call to either function takes effect; subsequent calls are ignored
+
+</v-clicks>
+
+---
+
+# .then() / .catch() / .finally()
+
+<div class="grid grid-cols-2 gap-6 mt-4">
+<div>
+
+```js
+function loadUser(id) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (id > 0) {
+        resolve({ id, name: 'Alice' })
+      } else {
+        reject(new Error('Invalid user ID'))
+      }
+    }, 500)
+  })
+}
+```
+
+</div>
+<div>
+
+```js
+loadUser(1)
+  .then(user => {
+    console.log('Got user:', user.name)
+    return user
+  })
+  .catch(err => {
+    console.error('Failed:', err.message)
+  })
+  .finally(() => {
+    console.log('Done — hide loading spinner')
+  })
+```
+
+</div>
+</div>
+
+<v-clicks>
+
+- `.then(onFulfilled)` — runs when the promise resolves; **returns a new Promise**
+- `.catch(onRejected)` — catches any error thrown anywhere earlier in the chain
+- `.finally(fn)` — runs regardless of outcome; ideal for cleanup (hide spinner, unlock button)
+
+</v-clicks>
+
+---
+
+# Chaining .then() — Load User → Load Posts
+
+<div class="grid grid-cols-2 gap-6 mt-4">
+<div>
+
+```js
+function loadUser(id) {
+  return new Promise(resolve =>
+    setTimeout(() => resolve({ id, name: 'Alice' }), 200)
+  )
+}
+
+function loadPosts(userId) {
+  return new Promise(resolve =>
+    setTimeout(() => resolve([
+      { id: 1 },
+      { id: 2 },
+      { id: 3 }
+    ]), 200)
+  )
+}
+```
+
+</div>
+<div>
+
+```js
+loadUser(1)
+  .then(user => {
+    console.log('User:', user.name)
+    // return the next Promise to keep the chain flat
+    return loadPosts(user.id)
+  })
+  .then(posts => {
+    console.log(`${posts.length} post(s) found`)
+  })
+  .catch(err => console.error('Error:', err))
+```
+
+</div>
+</div>
+
+<v-click>
+
+**Key rule:** always `return` the next Promise from inside `.then()`.  
+Forgetting `return` breaks the chain — the next `.then()` receives `undefined`  
+and the dependent operation runs "detached" with no error handling.
+
+</v-click>
+
+---
+
+# Microtask Queue — A Preview
+
+Promise callbacks go into the **microtask queue**, not the macrotask queue.
+
+```js
+console.log('start')
+
+setTimeout(() => console.log('timeout'), 0)        // macrotask
+Promise.resolve().then(() => console.log('promise')) // microtask
+
+console.log('end')
+```
+
+<v-click>
+
+```
+start
+end
+promise    ← microtask runs BEFORE the next macrotask
+timeout
+```
+
+All pending microtasks are flushed **before** the event loop picks the next macrotask.  
+We'll explore this fully next week when we cover `async`/`await`.
+
+</v-click>
+
+---
+
+# Summary — Week 2
+
+<v-clicks>
+
+- The **call stack** is a LIFO structure tracking function calls — JS is single-threaded, one execution context at a time
+- **Web APIs** (setTimeout, fetch, DOM events) live outside the engine; they push callbacks to the **macrotask queue** when done
+- The **event loop** moves queued tasks onto the call stack — only when it is empty
+- `setTimeout(fn, 0)` queues `fn` as a macrotask; it always runs **after** current synchronous code
+- Long synchronous work **blocks** the event loop — the UI freezes until the stack clears
+- A **Promise** is a handle for a future value: `pending` → `fulfilled` or `rejected`
+- `.then()` chains stay flat when you **return** the next Promise; `.catch()` handles any upstream error
+- Promise callbacks use the **microtask queue** and run before the next macrotask (full details in Week 3)
 
 </v-clicks>
 
@@ -374,10 +621,6 @@ class: text-center
 # Questions?
 
 <div class="mt-6 text-xl opacity-70">
-Next week: <strong>Event Loop & Call Stack</strong>
-</div>
-
-<div class="mt-8 opacity-40 text-sm">
-Week 1 · Professional JS Environment · JS & TS for Browser Applications
+  Next week: <strong>Async/Await & Advanced Promises</strong>
 </div>
 
