@@ -1,10 +1,10 @@
 ---
 theme: nord
 colorSchema: dark
-title: "Week 2 — Event Loop & Call Stack"
+title: "Week 3 — Async/Await & Advanced Promises"
 info: |
   ## JS & TS for Browser Applications
-  Week 2: Event Loop & Call Stack
+  Week 3: Async/Await & Advanced Promises
 class: text-left
 drawings:
   persist: false
@@ -12,93 +12,115 @@ transition: slide-left
 mdc: true
 layout: default
 ---
-# Event Loop & Call Stack
+# Async/Await & Advanced Promises
 
 ## Agenda
 
-1. Call stack & execution order
-2. JavaScript is single-threaded
-3. Web APIs — where async code lives
-4. Event loop & macrotask queue
-5. `setTimeout` / `setInterval` timing model
-6. Promises — `new Promise`, `.then()`, `.catch()`, `.finally()`
+1. `async` / `await` — syntax and semantics
+2. Refactor `.then()` chains to `async/await`
+3. Error handling with `try/catch`
+4. Microtasks vs macrotasks — why order differs
+5. `Promise.all`, `Promise.race`, `Promise.allSettled`
+6. Live coding — simple task scheduler
 
 ---
 layout: section
 ---
 
-# Part 1 — The Call Stack
+# Part 1 — async / await
 
 ---
 
-# What Is the Call Stack?
-
-The call stack is a **LIFO data structure** that tracks which function is currently running.
+# What Does `async` Do?
 
 ```js
-function greet(name) {
-  return `Hello, ${name}!`
+async function greet() {
+  return 'Hello!'
 }
 
-function sayHello() {
-  const msg = greet('Alice')
-  console.log(msg)
-}
-
-sayHello()
+const result = greet()
+console.log(result) // Promise { 'Hello!' }
 ```
 
 <v-clicks>
 
-- Every time a function is **called**, a new **execution context** is pushed onto the stack
-- When it **returns**, the execution context is popped off
-- The engine always executes the **top** execution context
+- Marking a function `async` makes it **always return a Promise**
+- A plain returned value is automatically wrapped: `return 'Hello!'` → `Promise.resolve('Hello!')`
+- You can `await` any async function just like any other Promise
+- `async` / `await` is **syntactic sugar** — it compiles down to `.then()` chains internally
 
 </v-clicks>
 
 ---
 
-# Call Stack — Step by Step
+# What Does `await` Do?
+
+```js
+function getData() {
+  return new Promise(resolve => {
+    setTimeout(() => resolve({ id: 1, title: 'Learn async/await' }), 500)
+  })
+}
+
+async function loadData() {
+  console.log('before await')
+  const data = await getData()
+  console.log('after await') // resumes here once the Promise resolves
+  return data
+}
+```
+
+<v-clicks>
+
+- `await` **pauses execution** of the `async` function until the Promise settles
+- The JS engine is **not blocked** — it continues processing other tasks while waiting
+- When the Promise resolves, the function **resumes** from the next line
+- `await` can only be used **inside** an `async` function (or at the top level of a module)
+
+</v-clicks>
+
+---
+
+# Refactor — .then() Chain → async/await
 
 <div class="grid grid-cols-2 gap-6 mt-4">
 <div>
 
+**Before — .then() chain**
+
 ```js
-function greet(name) {
-  return `Hello, ${name}!`
+function loadUserAndPosts(id) {
+  return loadUser(id)
+    .then(user => {
+      console.log('User:', user.name)
+      return loadPosts(user.id)
+    })
+    .then(posts => {
+      console.log(`${posts.length} post(s)`)
+    })
+    .catch(err => {
+      console.error('Error:', err.message)
+    })
 }
-
-function sayHello() {
-  const msg = greet('Alice')
-  console.log(msg)
-}
-
-sayHello()
 ```
 
 </div>
 <div>
 
-```
-Step 1 — sayHello() called
- ┌──────────────────┐
- │   sayHello()     │  ← executing
- └──────────────────┘
+**After — async/await**
 
-Step 2 — greet() called inside
- ┌──────────────────┐
- │   greet()        │  ← executing
- ├──────────────────┤
- │   sayHello()     │  ← waiting
- └──────────────────┘
+```js
+async function loadUserAndPosts(id) {
+  try {
+    const user = await loadUser(id)
+    console.log('User:', user.name)
 
-Step 3 — greet() returns
- ┌──────────────────┐
- │   sayHello()     │  ← resumes
- └──────────────────┘
-
-Step 4 — sayHello() returns
- (stack is empty)
+    const posts = await loadPosts(user.id)
+    console.log(`${posts.length} post(s)`)
+  } catch (err) {
+    console.error('Error:', err.message)
+  }
+}
 ```
 
 </div>
@@ -106,269 +128,195 @@ Step 4 — sayHello() returns
 
 <v-click>
 
-**Rule:** The engine only processes one execution context at a time. Nothing else runs while the stack is occupied.
+Same behaviour — but the `async/await` version reads like **synchronous code**.  
+Easier to follow, debug, and extend without callback nesting.
 
 </v-click>
 
 ---
 
-# Stack Overflow — When Recursion Goes Wrong
+# Error Handling — try / catch
 
 ```js
-function infinite(i) {
-  console.log(i)
-  return infinite(i + 1) // never reaches a base case
-}
+async function fetchUser(id) {
+  try {
+    const response = await fetch(`/api/users/${id}`)
 
-infinite(1) // ❌ RangeError: Maximum call stack size exceeded
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`)
+    }
+
+    const user = await response.json()
+    return user
+  } catch (err) {
+    console.error('fetchUser failed:', err.message)
+    throw err // re-throw so the caller can also handle it
+  } finally {
+    console.log('fetchUser done') // always runs
+  }
+}
 ```
 
 <v-clicks>
 
-- V8 allows roughly 10 000–15 000 execution contexts before crashing
-- Every recursive call adds an execution context — without a **base case**, the stack fills up completely
-- The browser throws a `RangeError` and unwinds the stack
-
-Recursion is powerful, but always needs a clear termination condition.
+- `try` wraps the "happy path" — `await` lines that might fail
+- `catch` receives any thrown error, including rejected Promises
+- `finally` always executes — use it to hide spinners, enable buttons, clean up resources
+- Re-throwing with `throw err` lets errors **bubble up** to the caller
 
 </v-clicks>
 
 ---
 
-# Part 2 — Single Thread & Web APIs
+# Common Mistake — Unhandled Rejection
 
-## JavaScript Is Single-Threaded
+```js
+// ❌ No try/catch — unhandled rejection
+async function bad() {
+  const data = await fetch('/api/broken-endpoint')
+  return data.json()
+}
+
+bad() // if this rejects: UnhandledPromiseRejection warning
+```
+
+```js
+// ✅ Always handle errors at the boundary
+async function good() {
+  try {
+    const data = await fetch('/api/broken-endpoint')
+    return data.json()
+  } catch (err) {
+    console.error('Request failed:', err)
+    return null
+  }
+}
+```
+
+<v-click>
+
+**Rule:** every `async` function that can reject should either handle the error internally  
+or be called with `.catch()` at the call site — never leave a rejection unhandled.
+
+</v-click>
+
+---
+layout: section
+---
+
+# Part 2 — Microtasks vs Macrotasks
+
+---
+
+# Two Queues — Quick Recap
 
 <div class="grid grid-cols-2 gap-8 mt-6">
-  <div v-click class="border border-gray-500 rounded-lg p-5">
-    <div class="text-3xl mb-3">🧵</div>
-    <strong>One call stack</strong>
-    <p class="text-sm mt-2 opacity-70">Only one piece of code runs at a time — no true parallelism inside JS</p>
+  <div v-click class="border border-blue-400 rounded-lg p-5">
+    <div class="text-3xl mb-3">⚡</div>
+    <strong>Microtask Queue</strong>
+    <p class="text-sm mt-2 opacity-70">Promise callbacks (<code>.then</code>, <code>.catch</code>, <code>.finally</code>), <code>queueMicrotask()</code>, <code>await</code> continuations</p>
   </div>
-  <div v-click class="border border-gray-500 rounded-lg p-5">
-    <div class="text-3xl mb-3">🌐</div>
-    <strong>Web APIs handle the rest</strong>
-    <p class="text-sm mt-2 opacity-70">fetch, setTimeout, DOM events — these run <em>outside</em> the JS engine, inside the browser</p>
+  <div v-click class="border border-orange-400 rounded-lg p-5">
+    <div class="text-3xl mb-3">🕐</div>
+    <strong>Macrotask Queue</strong>
+    <p class="text-sm mt-2 opacity-70"><code>setTimeout</code>, <code>setInterval</code>, DOM events, I/O callbacks</p>
   </div>
 </div>
 
 <v-click>
 
-```js
-// setTimeout does NOT pause the JS engine
-// It hands the timer off to a Web API
-setTimeout(() => {
-  console.log('fired after 2s')
-}, 2000)
+**The rule:**
 
-console.log('this runs immediately') // ← printed first
-```
+> After every macrotask, the engine **drains the entire microtask queue** before picking the next macrotask.
 
 </v-click>
 
 ---
 
-# The Browser Runtime — Full Picture
-
-```
-
-┌──────────────────────────────────────────────────────────────┐
-│                     JS Engine (V8)                           │
-│                                                              │
-│   ┌─────────────────┐        ┌────────────────────────┐      │
-│   │   Call Stack    │        │   Heap (objects)       │      │
-│   │                 │        │                        │      │
-│   │  [ main()     ] │        │  { id: 1, name: ... }  │      │
-│   └─────────────────┘        └────────────────────────┘      │
-└─────────────────┬────────────────────────────────────────────┘
-                  ↑  Event Loop pushes tasks here when stack is empty
-┌─────────────────┴────────────────────────────────────────────┐
-│              Macrotask Queue  (a.k.a. Task Queue)            │
-│   [ timer cb ]    [ click handler ]    [ network cb ]        │
-└─────────────────┬────────────────────────────────────────────┘
-                  ↑  Web APIs push callbacks here when they finish
-┌─────────────────┴────────────────────────────────────────────┐
-│                        Web APIs                              │
-│       setTimeout / setInterval     fetch     DOM events      │
-└──────────────────────────────────────────────────────────────┘
-```
-
-<div class="mt-4 text-sm opacity-60 text-center">
-  Visualise it live → <a href="https://www.jsv9000.app/" target="_blank">jsv9000.app</a>
-</div>
-
----
-layout: section
----
-
-# Part 3 — Event Loop & Macrotask Queue
-
----
-
-# The Event Loop — One Rule
-
-<v-clicks>
-
-The event loop continuously checks a single condition:
-
-> *Is the call stack empty?*
-> - **Yes** → take the next task from the queue and push it onto the stack
-> - **No** → wait
-
-```
-while (true) {
-  if (callStack.isEmpty() && taskQueue.hasTask()) {
-    callStack.push(taskQueue.dequeue())
-  }
-}
-```
-
-This is why `setTimeout(fn, 0)` does **not** mean "run right now" —  
-it means "run as soon as the current stack is clear."
-
-</v-clicks>
-
----
-
-# Macrotask Queue — What Goes In
-
-<v-clicks>
-
-| Source | When the callback is queued |
-| --- | --- |
-| `setTimeout(fn, delay)` | After at least `delay` ms |
-| `setInterval(fn, delay)` | Every ~`delay` ms |
-| DOM event listeners (click, input…) | When the user interacts |
-
-Each macrotask runs **to completion** before the next one starts.  
-That's why a long-running synchronous function blocks the entire UI.
-
-</v-clicks>
-
----
-
-# Why Long Sync Code Freezes the UI
+# Microtask vs Macrotask — Order Demo
 
 ```js
-// This blocks the browser for ~3 seconds:
-// no clicks, no animations, no scroll
-function doHeavyWork() {
-  const start = Date.now()
-  while (Date.now() - start < 3000) {
-    // busy-waiting — holding the call stack hostage
-  }
+console.log('1 — sync')
+
+setTimeout(() => console.log('2 — macrotask'), 0)
+
+Promise.resolve()
+  .then(() => console.log('3 — microtask 1'))
+  .then(() => console.log('4 — microtask 2'))
+
+console.log('5 — sync')
+```
+
+<v-click>
+
+```
+1 — sync
+5 — sync
+3 — microtask 1
+4 — microtask 2
+2 — macrotask
+```
+
+</v-click>
+
+<v-click>
+
+**Why?** Synchronous code runs first. When the stack empties, the microtask queue is fully drained  
+(microtask 1 → its `.then()` queues microtask 2 → microtask 2 runs) **before** any macrotask is processed.
+
+</v-click>
+
+---
+
+# `await` and the Microtask Queue
+
+```js
+async function run() {
+  console.log('A — start of async fn')
+  await Promise.resolve()   // suspends, queues continuation as microtask
+  console.log('C — after await')
 }
 
-btn.addEventListener('click', doHeavyWork)
-```
-
-<v-click>
-
-The event loop cannot process any queued task (render, click, scroll)  
-while `doHeavyWork` occupies the call stack.
-
-</v-click>
-
-<v-click>
-
-**Solutions:** `setTimeout` chunking &nbsp;·&nbsp; Web Workers &nbsp;·&nbsp; `async`/`await` with I/O
-
-</v-click>
-
----
-layout: section
----
-
-# Part 4 — setTimeout & setInterval
-
----
-
-# setTimeout — Minimum Delay, Not Exact Timing
-
-```js
-console.log('before')
-
-setTimeout(() => {
-  console.log('inside timeout')
-}, 0) // delay = 0 ms
-
-console.log('after')
-```
-
-<v-clicks>
-
-Output:
-```
-before
-after
-inside timeout   ← runs AFTER all synchronous code completes
-```
-
-`0 ms` means: "queue this for the very next available turn of the event loop."  
-Browsers enforce a **minimum delay of ~4 ms** for nested/chained `setTimeout` calls.
-
-</v-clicks>
-
----
-
-# setInterval — Repeating Timers
-
-```js
-let count = 0
-
-const id = setInterval(() => {
-  count++
-  console.log('tick', count)
-
-  if (count === 3) {
-    clearInterval(id) // stop the interval
-  }
-}, 1000)
-```
-
-<v-click>
-
-⚠️ If the callback takes **longer than the interval**, ticks pile up in the queue.  
-For smooth, frame-accurate animation use `requestAnimationFrame` instead.  
-For precise chained delays, prefer recursive `setTimeout`.
-
-</v-click>
-
----
-
-# 🔍 Predict the Output — Quiz 1
-
-```js
-console.log('A')
-
-setTimeout(() => console.log('B'), 0)
-
-console.log('C')
+console.log('B — before call')
+run()
+console.log('D — after call')
 ```
 
 <v-click>
 
 ```
-A
-C
-B
+B — before call
+A — start of async fn
+D — after call
+C — after await
 ```
 
-Synchronous code (`A`, `C`) runs first.  
-`B` is queued as a macrotask and executes only after the current stack empties.
+</v-click>
+
+<v-click>
+
+- `run()` starts synchronously up to the first `await`
+- The continuation (`C`) is queued as a **microtask**
+- Control returns to the caller — `D` prints
+- After the stack empties, the microtask fires → `C` prints
 
 </v-click>
 
 ---
 
-# 🔍 Predict the Output — Quiz 2
+# 🔍 Predict the Output — Quiz
 
 ```js
 console.log('start')
 
-setTimeout(() => console.log('timeout 1'), 100)
-setTimeout(() => console.log('timeout 2'), 0)
+async function foo() {
+  console.log('foo start')
+  await null
+  console.log('foo end')
+}
 
+setTimeout(() => console.log('timeout'), 0)
+foo()
 console.log('end')
 ```
 
@@ -376,13 +324,14 @@ console.log('end')
 
 ```
 start
+foo start
 end
-timeout 2
-timeout 1
+foo end
+timeout
 ```
 
-Both callbacks are macrotasks. They execute in **timer-expiration order** —  
-`timeout 2` fires first because its delay (0 ms) expires before 100 ms.
+`foo start` prints synchronously. `await null` suspends at a microtask boundary.  
+`end` prints. Microtask (`foo end`) drains before the macrotask (`timeout`).
 
 </v-click>
 
@@ -390,226 +339,247 @@ Both callbacks are macrotasks. They execute in **timer-expiration order** —
 layout: section
 ---
 
-# Part 5 — Promises
+# Part 3 — Promise Combinators
 
 ---
 
-# What Is a Promise?
+# Promise.all — Run in Parallel, Wait for All
+
+```js
+const [user, posts, settings] = await Promise.all([
+  fetchUser(1),
+  fetchPosts(1),
+  fetchSettings(1),
+])
+```
 
 <v-clicks>
 
-A **Promise** is an object representing the eventual result of an asynchronous operation.
+- Starts **all Promises at the same time** — true parallel async execution
+- Resolves when **every** Promise has fulfilled — result is an array of values in the same order
+- **Rejects immediately** if any Promise rejects — other results are discarded
 
-Think of it like ordering food at a restaurant:
+```js
+// Compared to sequential:
+const user = await fetchUser(1)       // waits 200ms
+const posts = await fetchPosts(1)     // then waits 200ms → total ~400ms
 
-- You place an order → receive a **receipt** (the Promise object)
-- You attach instructions: *"when the food is ready, do this"* (`.then()`)
-- While waiting, you can do other things — you're not blocked
-- If the kitchen fails → you're notified (`.catch()`)
+// vs parallel:
+const [user, posts] = await Promise.all([
+  fetchUser(1),   //  ┐ both start at once
+  fetchPosts(1),  //  ┘ total ~200ms
+])
+```
 
 </v-clicks>
 
 ---
 
-# Promise States
-
-<div class="grid grid-cols-3 gap-6 mt-8 text-center">
-  <div v-click class="border border-yellow-500 rounded-lg p-5">
-    <div class="text-3xl mb-3">⏳</div>
-    <strong>Pending</strong>
-    <p class="text-sm mt-2 opacity-70">Initial state — the async operation has not completed yet</p>
-  </div>
-  <div v-click class="border border-green-500 rounded-lg p-5">
-    <div class="text-3xl mb-3">✅</div>
-    <strong>Fulfilled</strong>
-    <p class="text-sm mt-2 opacity-70">Operation completed successfully; the result value is available</p>
-  </div>
-  <div v-click class="border border-red-500 rounded-lg p-5">
-    <div class="text-3xl mb-3">❌</div>
-    <strong>Rejected</strong>
-    <p class="text-sm mt-2 opacity-70">Operation failed; an error reason is available</p>
-  </div>
-</div>
-
-<v-click>
-
-A promise transitions **Pending → Fulfilled** or **Pending → Rejected** — exactly once.  
-Once settled, its state is **immutable** — it never changes again.
-
-</v-click>
-
----
-
-# Creating a Promise
+# Promise.allSettled — Run All, Collect Every Result
 
 ```js
-const p = new Promise((resolve, reject) => {
-  // The executor function runs synchronously (right now)
-  setTimeout(() => {
-    const success = true
+const results = await Promise.allSettled([
+  fetchUser(1),
+  fetchUser(-1), // this one will reject
+  fetchUser(3),
+])
 
-    if (success) {
-      resolve('Data loaded!') // → fulfilled
-    } else {
-      reject(new Error('Something went wrong')) // → rejected
-    }
-  }, 1000)
+results.forEach(result => {
+  if (result.status === 'fulfilled') {
+    console.log('OK:', result.value)
+  } else {
+    console.error('Failed:', result.reason.message)
+  }
 })
 ```
 
 <v-clicks>
 
-- The **executor** `(resolve, reject) => { ... }` runs **immediately** when `new Promise()` is called
-- `resolve(value)` — settles the promise as fulfilled, value becomes the result
-- `reject(reason)` — settles the promise as rejected, reason is the error
-- Only the **first** call to either function takes effect; subsequent calls are ignored
+- **Never rejects** — waits for every Promise to settle (fulfill or reject)
+- Returns an array of `{ status, value }` or `{ status, reason }` objects
+- Ideal when you need **all outcomes**, even partial failures — e.g. batch API calls, dashboard widgets
 
 </v-clicks>
 
 ---
 
-# .then() / .catch() / .finally()
-
-<div class="grid grid-cols-2 gap-6 mt-4">
-<div>
+# Promise.race — First One Wins
 
 ```js
-function loadUser(id) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (id > 0) {
-        resolve({ id, name: 'Alice' })
-      } else {
-        reject(new Error('Invalid user ID'))
-      }
-    }, 500)
-  })
-}
+const result = await Promise.race([
+  fetchData(),
+  new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('Timeout!')), 3000)
+  ),
+])
 ```
-
-</div>
-<div>
-
-```js
-loadUser(1)
-  .then(user => {
-    console.log('Got user:', user.name)
-    return user
-  })
-  .catch(err => {
-    console.error('Failed:', err.message)
-  })
-  .finally(() => {
-    console.log('Done — hide loading spinner')
-  })
-```
-
-</div>
-</div>
 
 <v-clicks>
 
-- `.then(onFulfilled)` — runs when the promise resolves; **returns a new Promise**
-- `.catch(onRejected)` — catches any error thrown anywhere earlier in the chain
-- `.finally(fn)` — runs regardless of outcome; ideal for cleanup (hide spinner, unlock button)
+- Settles with the **first** Promise to settle — whether fulfilled or rejected
+- Common use case: **timeout wrapper** — cancel a slow request if it takes too long
+- Note: the other Promises keep running in the background — they just can't affect `result`
+
+| Combinator | Resolves when | Rejects when |
+| --- | --- | --- |
+| `Promise.all` | **all** fulfill | **any** rejects |
+| `Promise.allSettled` | **all** settle | never |
+| `Promise.race` | **first** settles | **first** rejects |
+| `Promise.any` | **first** fulfills | **all** reject |
 
 </v-clicks>
 
 ---
+layout: section
+---
 
-# Chaining .then() — Load User → Load Posts
+# Part 4 — Live Coding
 
-<div class="grid grid-cols-2 gap-6 mt-4">
-<div>
+---
 
-```js
-function loadUser(id) {
-  return new Promise(resolve =>
-    setTimeout(() => resolve({ id, name: 'Alice' }), 200)
-  )
-}
+# Live Coding — runTasksInOrder
 
-function loadPosts(userId) {
-  return new Promise(resolve =>
-    setTimeout(() => resolve([
-      { id: 1 },
-      { id: 2 },
-      { id: 3 }
-    ]), 200)
-  )
-}
-```
-
-</div>
-<div>
+**Goal:** run a list of async tasks **one by one**, waiting for each before starting the next.
 
 ```js
-loadUser(1)
-  .then(user => {
-    console.log('User:', user.name)
-    // return the next Promise to keep the chain flat
-    return loadPosts(user.id)
-  })
-  .then(posts => {
-    console.log(`${posts.length} post(s) found`)
-  })
-  .catch(err => console.error('Error:', err))
-```
+async function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
 
-</div>
-</div>
+const tasks = [
+  async () => { await delay(300); console.log('Task 1 done') },
+  async () => { await delay(100); console.log('Task 2 done') },
+  async () => { await delay(200); console.log('Task 3 done') },
+]
+```
 
 <v-click>
 
-**Key rule:** always `return` the next Promise from inside `.then()`.  
-Forgetting `return` breaks the chain — the next `.then()` receives `undefined`  
-and the dependent operation runs "detached" with no error handling.
+Expected output:
+```
+Task 1 done   ← after ~300ms
+Task 2 done   ← after ~400ms total
+Task 3 done   ← after ~600ms total
+```
 
 </v-click>
 
 ---
 
-# Microtask Queue — A Preview
-
-Promise callbacks go into the **microtask queue**, not the macrotask queue.
+# runTasksInOrder — Implementation
 
 ```js
+async function runTasksInOrder(tasks) {
+  for (const task of tasks) {
+    await task() // wait for each task before moving to the next
+  }
+}
+
+await runTasksInOrder(tasks)
+```
+
+<v-clicks>
+
+Why `for...of` and not `forEach`?
+
+```js
+// ❌ forEach doesn't await — all tasks fire at once
+tasks.forEach(async task => {
+  await task()
+})
+
+// ✅ for...of respects await — true sequential execution
+for (const task of tasks) {
+  await task()
+}
+```
+
+`Array.forEach` is **not Promise-aware** — it ignores the returned Promise from the async callback.
+
+</v-clicks>
+
+---
+
+# runTasksInOrder — Bonus: Collect Results
+
+```js
+async function runTasksInOrder(tasks) {
+  const results = []
+
+  for (const task of tasks) {
+    const result = await task()
+    results.push(result)
+  }
+
+  return results
+}
+```
+
+<v-click>
+
+**Compare: sequential vs parallel**
+
+```js
+// Sequential — total time = sum of all durations
+const results = await runTasksInOrder(tasks)
+
+// Parallel — total time = longest single duration
+const results = await Promise.all(tasks.map(task => task()))
+```
+
+Choose sequential when tasks **depend on each other** or share a rate-limited resource.  
+Choose parallel when tasks are **independent** and you want maximum throughput.
+
+</v-click>
+
+---
+
+# Microtask Queue — Deep Demo
+
+```js
+async function step(name, ms) {
+  await delay(ms)
+  console.log(name, 'done')
+}
+
 console.log('start')
 
-setTimeout(() => console.log('timeout'), 0)        // macrotask
-Promise.resolve().then(() => console.log('promise')) // microtask
+step('A', 100)
+step('B', 50)
+step('C', 75)
 
-console.log('end')
+console.log('all started')
 ```
 
 <v-click>
 
 ```
 start
-end
-promise    ← microtask runs BEFORE the next macrotask
-timeout
+all started
+B done   ← 50ms
+C done   ← 75ms
+A done   ← 100ms
 ```
 
-All pending microtasks are flushed **before** the event loop picks the next macrotask.  
-We'll explore this fully next week when we cover `async`/`await`.
+All three `step()` calls start **concurrently** (no `await` before them).  
+They run in parallel and finish in timer-expiration order.
 
 </v-click>
 
 ---
 
-# Summary — Week 2
+# Summary — Week 3
 
 <v-clicks>
 
-- The **call stack** is a LIFO structure tracking function calls — JS is single-threaded, one execution context at a time
-- **Web APIs** (setTimeout, fetch, DOM events) live outside the engine; they push callbacks to the **macrotask queue** when done
-- The **event loop** moves queued tasks onto the call stack — only when it is empty
-- `setTimeout(fn, 0)` queues `fn` as a macrotask; it always runs **after** current synchronous code
-- Long synchronous work **blocks** the event loop — the UI freezes until the stack clears
-- A **Promise** is a handle for a future value: `pending` → `fulfilled` or `rejected`
-- `.then()` chains stay flat when you **return** the next Promise; `.catch()` handles any upstream error
-- Promise callbacks use the **microtask queue** and run before the next macrotask (full details in Week 3)
+- `async` functions **always return a Promise**; `await` pauses execution until a Promise settles
+- `async/await` is syntactic sugar over `.then()` — same microtask mechanics, cleaner syntax
+- Use `try/catch/finally` inside `async` functions for structured error handling
+- **Microtasks** (Promise callbacks, `await` continuations) flush **before** the next macrotask
+- `Promise.all` — parallel, fails fast; use when all results are required
+- `Promise.allSettled` — parallel, never rejects; use when you need every outcome
+- `Promise.race` — resolves/rejects with the first settled Promise; useful for timeouts
+- `for...of` + `await` = sequential async loop; `Promise.all` = parallel async execution
 
 </v-clicks>
 
@@ -621,6 +591,5 @@ class: text-center
 # Questions?
 
 <div class="mt-6 text-xl opacity-70">
-  Next week: <strong>Async/Await & Advanced Promises</strong>
+  Next week: <strong>Closures, Scope & Context</strong>
 </div>
-
